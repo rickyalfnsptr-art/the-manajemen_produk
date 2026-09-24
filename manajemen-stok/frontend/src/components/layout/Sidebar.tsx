@@ -173,16 +173,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
       </nav>
 
       {/* User Footer matching MTM Reference style */}
-      <div className="p-3 border-t border-slate-200 bg-slate-50/70">
+      <div className="p-3 border-t border-slate-200 bg-slate-50/70" suppressHydrationWarning>
         <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200 shadow-xs mb-2">
-          <div className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-700 font-bold rounded-lg text-xs border border-blue-200 flex-shrink-0">
+          <div
+            className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-700 font-bold rounded-lg text-xs border border-blue-200 flex-shrink-0"
+            suppressHydrationWarning
+          >
             {getInitials(user?.fullName || user?.username)}
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-bold text-slate-900 truncate">
+          <div className="min-w-0 flex-1" suppressHydrationWarning>
+            <p className="text-xs font-bold text-slate-900 truncate" suppressHydrationWarning>
               {user ? user.fullName : 'Operator MTM'}
             </p>
-            <p className="text-[10px] text-slate-500 truncate flex items-center gap-1 font-semibold">
+            <p className="text-[10px] text-slate-500 truncate flex items-center gap-1 font-semibold" suppressHydrationWarning>
               <ShieldCheck className="w-3 h-3 text-emerald-600 flex-shrink-0" />
               <span>{user ? user.role : 'OPERATOR'}</span> &bull; <span>NPK: {user ? user.npk : 'MTM'}</span>
             </p>

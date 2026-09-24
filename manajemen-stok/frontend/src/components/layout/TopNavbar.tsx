@@ -69,7 +69,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
         {/* Live Digital Clock */}
         <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-mono font-bold border border-slate-200">
           <Clock className="w-3.5 h-3.5 text-slate-500" />
-          <span>{timeStr || '10:30:00 WIB'}</span>
+          <span suppressHydrationWarning>{timeStr || '--:--:-- WIB'}</span>
         </div>
       </div>
     </header>
