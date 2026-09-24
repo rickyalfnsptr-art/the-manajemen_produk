@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+  }
+}
+
+/* Custom glowing & pulsing effects for MTM tracking & status */
+.pulse-glow-red {
+  box-shadow: 0 0 15px rgba(220, 38, 38, 0.45);
+}
+
+.pulse-glow-green {
+  box-shadow: 0 0 15px rgba(22, 163, 74, 0.45);
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
