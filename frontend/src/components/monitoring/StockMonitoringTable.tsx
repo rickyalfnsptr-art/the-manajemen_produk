@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { PartCustomerStock } from '@/types';
+import { PartCustomerStock } from '../../types';
 import { StockStatusBadge } from './StockStatusBadge';
 import { Search, Filter, ExternalLink, Settings, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';

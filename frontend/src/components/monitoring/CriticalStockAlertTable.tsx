@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { PartCustomerStock } from '@/types';
+import { PartCustomerStock } from '../../types';
 import { AlertTriangle, TrendingDown, TrendingUp, Sliders, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 

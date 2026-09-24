@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { PartCustomerStock } from '@/types';
+import { PartCustomerStock } from '../../types';
 import { Building2, Sliders } from 'lucide-react';
 
 interface PpicWhiteboardViewProps {

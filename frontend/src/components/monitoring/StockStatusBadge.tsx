@@ -1,5 +1,5 @@
 import React from 'react';
-import { StockStatus } from '@/types';
+import { StockStatus } from '../../types';
 import { AlertTriangle, CheckCircle, Flame, TrendingDown, TrendingUp } from 'lucide-react';
 
 interface StockStatusBadgeProps {
