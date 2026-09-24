@@ -10,8 +10,10 @@ Sistem ini dirancang khusus untuk memodernisasi dan mengotomatisasi proses penca
 ### Tujuan Utama:
 1. **Akurasi Stok Real-time:** Menghilangkan pencatatan manual berbasis kertas dan menggantikannya dengan pemindaian barcode/QR code langsung saat barang masuk (*Scan IN*) dan keluar (*Scan OUT*).
 2. **Early Warning System (Per Part):** Memberikan visibilitas instan kepada PPIC dan Supervisor terhadap status stok per part melalui sistem ambang batas (*Min/Max Threshold*) dengan indikator visual warna (Merah & Hijau).
-3. **Stock Journey & Aging Traceability:** Melacak riwayat perjalanan stok (kapan barang masuk, berapa lama mengendap di WHFG, kapan keluar, dan siapa operator yang menangani).
-4. **Isolasi Transaksi Multi-Pintu:** Menjamin kelancaran operasional saat banyak operator melakukan pemindaian serentak dari berbagai line produksi internal maupun vendor/subcont eksternal.
+3. **Statistik Pemantauan di Dashboard:** Menyajikan grafik dan visual statistik pergerakan stok langsung di dashboard monitoring untuk memantau tren operasional WHFG.
+4. **Stock Journey & Aging Traceability:** Melacak riwayat perjalanan stok (kapan barang masuk, berapa lama mengendap di WHFG, kapan keluar, dan siapa operator yang menangani).
+5. **Isolasi Transaksi Multi-Pintu:** Menjamin kelancaran operasional saat banyak operator melakukan pemindaian serentak dari berbagai line produksi internal maupun vendor/subcont eksternal.
+6. **Mekanisme Backup Modul Laporan:** Menyediakan folder backup mandiri untuk modul laporan lengkap (*ready-to-use*) agar siap diaktifkan kapan saja dibutuhkan tanpa membebani antarmuka utama.
 
 ---
 
@@ -27,6 +29,8 @@ Berdasarkan dokumen analisis tanya-jawab (*Q&A Analysis Document*), ruang lingku
 | **Integrasi ERP** | **Standalone System** | Sistem berdiri sendiri (*standalone*) via REST API HTTPS. Tidak ada integrasi langsung ke SAP/Oracle. |
 | **Pencetakan QR** | **External / Vendor** | Pembuatan dan pencetakan label QR Code dilakukan oleh sistem/program lain. Tugas sistem ini murni membaca (*scan*) dan memvalidasi data QR. |
 | **Penerimaan Melebihi Max** | **Tetap Bisa Masuk (Non-blocking)** | Stok akan **tetap bisa masuk** (Scan IN berhasil) walaupun jumlah stok sudah melebihi batas Max. Batas Max **hanya berfungsi sebagai peringatan warna merah di Dashboard**, bukan pembatas fisik penerimaan. |
+| **Statistik Dashboard** | **Monitoring Only** | Tampilan statistik dan grafik disajikan di Dashboard murni untuk kebutuhan pemantauan visual (*monitoring*). |
+| **Fitur Laporan Lengkap** | **Disimpan di Folder Backup** | Fitur laporan detail tidak langsung dipasang di menu aktif, melainkan disimpan sebagai modul backup mandiri di `backup-features/reports/` yang siap diaktifkan kapan saja. |
 | **Selisih Fisik** | **Out of Scope** | Sistem mencatat transaksi aktual pemindaian. Penanganan selisih fisik gudang di luar tanggung jawab sistem ini. |
 | **Perangkat Scanner** | **Zebra Scanner Gun** | Menggunakan scanner Zebra yang terhubung ke jaringan (WiFi/LAN) via keyboard emulation / barcode listener. |
 | **Umpan Balik Scanner** | **Teks Sederhana** | Layar scanner hanya menampilkan teks: **"Berhasil"** (sukses) atau **"Gagal"** (ditolak/duplikat/error). Jika di-scan dua kali, sistem menampilkan **"Gagal karena sudah discan"**. |
@@ -107,7 +111,7 @@ Terdapat **523 User** dalam database MTM dengan rincian departemen/role:
 
 | Role / Departemen | Jumlah User | Hak Akses Sistem |
 |---|---|---|
-| **PPIC** | Terdaftar | **Full Access**: Master Parts, Pengaturan Min/Max per part, Monitoring Dashboard, Analisis Aging, Laporan. |
+| **PPIC** | Terdaftar | **Full Access**: Master Parts, Pengaturan Min/Max per part, Monitoring Dashboard, Analisis Aging. |
 | **ADMIN** | Terdaftar | **Full Access**: Konfigurasi Sistem, User Management, Master Data, Audit Log. |
 | **PRODUCTION_I / PRODUCTION_II** | Terdaftar (Mayoritas) | **Operator Scan**: Scan IN, Scan OUT, Input Manual Fallback, Cek Riwayat Scan. |
 | **QUALITY_ASSURANCE / PROCESS_ENG** | Terdaftar | **Read-Only / Monitoring**: Akses Dashboard Monitoring & Tracking Part. |
@@ -118,7 +122,7 @@ Terdapat **523 User** dalam database MTM dengan rincian departemen/role:
 
 ### 4.1. End-to-End System Flowchart (Bagan Alur Keseluruhan Sistem)
 
-Diagram berikut menggambarkan alur operasional menyeluruh antara aktor Operator Pulling, PPIC/Admin, pemrosesan transaksi independen, validasi scan, evaluasi ambang batas, hingga dashboard monitoring:
+Diagram berikut menggambarkan alur operasional menyeluruh antara aktor Operator Pulling, PPIC/Admin, pemrosesan transaksi independen, validasi scan, evaluasi ambang batas, hingga dashboard monitoring dan statistik:
 
 ```mermaid
 flowchart TD
@@ -170,20 +174,28 @@ flowchart TD
         EVAL_THRESHOLD --> DASHBOARD["Dashboard Monitoring Stok Real-Time WHFG"]
         DASHBOARD --> COLOR_RED["🔴 Merah: Stok <= Min ATAU Stok >= Max"]
         DASHBOARD --> COLOR_GREEN["🟢 Hijau: Min < Stok < Max"]
+        DASHBOARD --> STATS_VIEW["📊 Statistik Pantauan Stok (IN/OUT, Status Dist, Line Share)"]
         
         CALC_AGING --> TRACKING_VIEW["Halaman Stock Journey & Aging Timeline"]
         DASHBOARD --> TRACKING_VIEW
+    end
+
+    subgraph Backup_Module ["Folder Backup Modul Laporan (Ready-to-Use)"]
+        BACKUP_DIR["📁 backup-features/reports/ (Backend & Frontend Module)"]
+        BACKUP_DIR -.->|Jika Dibutuhkan Nanti| ACTIVATE["Aktifkan Fitur Laporan Lengkap"]
     end
 
     classDef redStyle fill:#fee2e2,stroke:#ef4444,stroke-width:2px,color:#991b1b;
     classDef greenStyle fill:#dcfce7,stroke:#22c55e,stroke-width:2px,color:#166534;
     classDef blueStyle fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e40af;
     classDef yellowStyle fill:#fef9c3,stroke:#eab308,stroke-width:2px,color:#854d0e;
+    classDef purpleStyle fill:#f3e8ff,stroke:#a855f7,stroke-width:2px,color:#6b21a8;
 
     class COLOR_RED,FB_FAIL,REJECT_IN,REJECT_OUT redStyle;
     class COLOR_GREEN,FB_SUCCESS,COMMIT_IN,COMMIT_OUT greenStyle;
-    class DASHBOARD,TRACKING_VIEW,MASTER_VIEW blueStyle;
+    class DASHBOARD,TRACKING_VIEW,MASTER_VIEW,STATS_VIEW blueStyle;
     class CHECK_DUP_IN,CHECK_STOCK_OUT,CHECK_TYPE,START_SCAN yellowStyle;
+    class BACKUP_DIR,ACTIVATE purpleStyle;
 ```
 
 ---
@@ -285,7 +297,8 @@ flowchart TD
     F --> G
     
     G --> H[Update KPI Summary Counter: Total Menipis / Normal / Overstock]
-    H --> I([Dashboard Menampilkan Indikator Warna Real-time])
+    H --> I[Update Grafik Statistik Monitoring di Dashboard]
+    I --> J([Dashboard Menampilkan Indikator Warna & Statistik Real-time])
 
     classDef red fill:#fee2e2,stroke:#ef4444,stroke-width:2px,color:#991b1b;
     classDef green fill:#dcfce7,stroke:#22c55e,stroke-width:2px,color:#166534;
@@ -293,7 +306,7 @@ flowchart TD
 
     class D,E red;
     class F green;
-    class G,H,I blue;
+    class G,H,I,J blue;
 ```
 
 ---
@@ -391,7 +404,7 @@ Jika label QR Code rusak atau tidak terbaca oleh scanner Zebra, operator dapat m
 
 ---
 
-## 6. ATURAN AMBANG BATAS (MIN/MAX) & WARNING DASHBOARD PER PART
+## 6. ATURAN AMBANG BATAS, STATISTIK DASHBOARD & BACKUP LAPORAN
 
 ### 6.1. Input Nilai Min & Max Manual oleh PPIC
 - Nilai ambang batas **Min Stock** dan **Max Stock** tidak bersifat statis global, melainkan **diinput secara manual per part number oleh user PPIC/Admin**.
@@ -411,24 +424,23 @@ $$\text{Status Stok}(part) = \begin{cases}
 > 2. **Peringatan Warna:** Peringatan warna merah $\ge$ Max murni berfungsi sebagai **indikator visual di Dashboard** agar PPIC/Supervisor menyadari adanya overstock dan dapat mengambil tindakan manajerial.
 > 3. Peringatan warna **hanya dan khusus untuk kuantitas stok per part**. Tidak ada sistem peringatan warna untuk durasi penyimpanan (aging) di WHFG.
 
-### 6.3. Tampilan Dashboard Monitoring WHFG
-- **Tabel / Papan Monitoring Stok:** Menampilkan setiap part beserta:
-  - Part Number & Part Name
-  - Line Asal / Vendor
-  - Batas Min & Batas Max
-  - Stok Saat Ini (Current Stock)
-  - Badge Status Warna (🔴 Merah / 🟢 Hijau)
-- **Quick Filters:**
-  - *Semua Part*
-  - 🔴 *Perlu Perhatian (Stok $\le$ Min atau $\ge$ Max)*
-  - 🟢 *Normal (Min < Stok < Max)*
-  - Filter per Kategori / Line / Customer
-- **KPI Summary Cards:**
-  - Total Part Terdaftar
-  - Total Part Stok Normal (🟢)
-  - Total Part Stok Kritis/Menipis (🔴)
-  - Total Part Overstock (🔴)
-  - Total In & Total Out Hari Ini
+### 6.3. Tampilan Dashboard Monitoring & Statistik Stok (Monitoring Only)
+- **Tabel Monitoring Stok:** Menampilkan setiap part beserta Part Number, Part Name, Line Asal/Vendor, Min, Max, Current Stock, dan Badge Status Warna (🔴 Merah / 🟢 Hijau).
+- **Quick Filters:** *Semua Part*, 🔴 *Perlu Perhatian (Stok $\le$ Min atau $\ge$ Max)*, 🟢 *Normal (Min < Stok < Max)*, filter per Kategori/Line/Customer.
+- **KPI Summary Cards:** Total Part, Total Normal (🟢), Total Menipis (🔴), Total Overstock (🔴), Total IN & OUT Hari Ini.
+- **Statistik Pemantauan Stok (Visual Monitoring Charts):**
+  1. *Tren Perputaran Stok Harian / Mingguan (Bar Chart: Total IN vs OUT)*
+  2. *Distribusi Proporsi Status Stok (Pie Chart / Donut: Normal vs Kritis vs Overstock)*
+  3. *Komposisi Penerimaan Berdasarkan Asal Barang (Line Produksi Internal vs Vendor Eksternal)*
+  4. *Top 5 Fast-Moving Finished Goods*
+
+### 6.4. Arsitektur Folder Backup Modul Laporan (`backup-features/reports/`)
+Sesuai arahan, fitur laporan detail (*laporan rekapitulasi transaksi, export spreadsheet, dll.*) tidak langsung diaktifkan pada menu utama operasional, melainkan disimpan dalam satu folder backup mandiri:
+- **Lokasi Folder:** `manajemen-stok/backup-features/reports/`
+- **Isi Folder Backup:**
+  - `backend/`: Controller, Service, dan DTO modul laporan (`reports.module.ts`, `reports.service.ts`, `reports.controller.ts`).
+  - `frontend/`: Halaman dan komponen UI laporan (`reports/page.tsx`, `ExportReportModal.tsx`, `DateRangePicker.tsx`).
+  - `README.md`: Panduan cepat cara mengaktifkan/memindahkan modul laporan ini ke aplikasi utama saat dibutuhkan di masa mendatang.
 
 ---
 
@@ -550,14 +562,14 @@ erDiagram
 | `POST` | `/api/scan/out` | Pemrosesan Scan OUT QR Code (tolak jika sudah OUT / kosong) | Operator, PPIC, Admin |
 | `POST` | `/api/stock/manual` | Fallback Input Manual (PartNo, Qty, Status, Line, Waktu) | Operator, PPIC, Admin |
 | `GET` | `/api/stock/monitoring` | Ambil data stok per part & status warna (Merah/Hijau) | All Roles |
+| `GET` | `/api/stock/statistics` | Ambil data statistik & grafik pemantauan dashboard | All Roles |
 | `GET` | `/api/master-parts` | Ambil daftar 481 master parts & pengelompokan | All Roles |
 | `PATCH`| `/api/master-parts/:id/threshold` | Input/update manual nilai Min & Max per part | PPIC, Admin |
 | `GET` | `/api/tracking/:query` | Ambil timeline riwayat perjalanan & durasi simpan | All Roles |
-| `GET` | `/api/reports/turnover` | Ambil data statistik perputaran & grafik laporan bulanan | PPIC, Admin |
 | `GET` | `/api/audit-logs` | Ambil riwayat audit log transaksi scan | PPIC, Admin |
 
 ---
 
 ## 10. KESIMPULAN
 
-Dokumen analisis ini telah mengunci seluruh kebutuhan operasional, batasan teknis, aturan bisnis ambang batas stok per part, penanganan multi-operator, format QR Code plain text, dan mekanisme pelacakan perjalanan stok WHFG PT MTM. Implementasi aplikasi pada folder `manajemen-stok/` akan mengikuti seluruh parameter dalam dokumen ini secara presisi.
+Dokumen analisis ini telah mengunci seluruh kebutuhan operasional, batasan teknis, aturan bisnis ambang batas stok per part, penanganan multi-operator, format QR Code plain text, statistik pemantauan dashboard, mekanisme pelacakan perjalanan stok WHFG, dan folder backup modul laporan PT MTM. Implementasi aplikasi pada folder `manajemen-stok/` akan mengikuti seluruh parameter dalam dokumen ini secara presisi.
