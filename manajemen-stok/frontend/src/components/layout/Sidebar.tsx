@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
+  BarChart3,
+  Activity,
   LayoutGrid,
   QrCode,
   Clock,
@@ -60,9 +62,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
       title: 'MAIN MENU',
       items: [
         {
+          name: 'Dashboard Statistik',
+          href: '/statistics',
+          icon: LayoutDashboard,
+          desc: 'Grafik mutasi IN/OUT & analisis inventori',
+        },
+        {
           name: 'Monitoring Stok',
           href: '/dashboard',
-          icon: LayoutDashboard,
+          icon: Activity,
           desc: 'Pantauan realtime & prioritas part kritis',
         },
       ],
