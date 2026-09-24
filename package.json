@@ -1,0 +1,12 @@
+{
+  "name": "analisis-manajemen-stok-whfg",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistem Manajemen & Monitoring Stok WHFG PT Menara Terus Makmur",
+  "scripts": {
+    "dev:backend": "npm --prefix backend run start:dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:backend": "npm --prefix backend run build",
+    "build:frontend": "npm --prefix frontend run build"
+  }
+}
