@@ -3,13 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { 
-  LayoutDashboard, 
+import {
+  LayoutDashboard,
   LayoutGrid,
-  QrCode, 
-  Clock, 
-  Boxes, 
-  LogOut, 
+  QrCode,
+  Clock,
+  Boxes,
+  LogOut,
   ShieldCheck,
   X
 } from 'lucide-react';
@@ -143,23 +143,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
                     onClick={() => {
                       if (isMobile && onCloseMobile) onCloseMobile();
                     }}
-                    className={`group flex items-start gap-3 px-3 py-2 rounded-xl transition-all duration-150 font-medium ${
-                      isActive
+                    className={`group flex items-start gap-3 px-3 py-2 rounded-xl transition-all duration-150 font-medium ${isActive
                         ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                    }`}
+                      }`}
                   >
                     <Icon
-                      className={`w-4 h-4 mt-0.5 flex-shrink-0 transition-colors ${
-                        isActive ? 'text-white' : 'text-slate-400 group-hover:text-blue-600'
-                      }`}
+                      className={`w-4 h-4 mt-0.5 flex-shrink-0 transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-blue-600'
+                        }`}
                     />
                     <div className="min-w-0">
                       <div className="text-xs font-bold leading-tight">{item.name}</div>
                       <div
-                        className={`text-[10px] font-normal truncate mt-0.5 ${
-                          isActive ? 'text-blue-100' : 'text-slate-400'
-                        }`}
+                        className={`text-[10px] font-normal truncate mt-0.5 ${isActive ? 'text-blue-100' : 'text-slate-400'
+                          }`}
                       >
                         {item.desc}
                       </div>
@@ -173,19 +170,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
       </nav>
 
       {/* User Footer matching MTM Reference style */}
-      <div className="p-3 border-t border-slate-200 bg-slate-50/70" suppressHydrationWarning>
+      <div className="p-3 border-t border-slate-200 bg-slate-50/70">
         <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200 shadow-xs mb-2">
-          <div
-            className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-700 font-bold rounded-lg text-xs border border-blue-200 flex-shrink-0"
-            suppressHydrationWarning
-          >
+          <div className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-700 font-bold rounded-lg text-xs border border-blue-200 flex-shrink-0">
             {getInitials(user?.fullName || user?.username)}
           </div>
-          <div className="min-w-0 flex-1" suppressHydrationWarning>
-            <p className="text-xs font-bold text-slate-900 truncate" suppressHydrationWarning>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-slate-900 truncate">
               {user ? user.fullName : 'Operator MTM'}
             </p>
-            <p className="text-[10px] text-slate-500 truncate flex items-center gap-1 font-semibold" suppressHydrationWarning>
+            <p className="text-[10px] text-slate-500 truncate flex items-center gap-1 font-semibold">
               <ShieldCheck className="w-3 h-3 text-emerald-600 flex-shrink-0" />
               <span>{user ? user.role : 'OPERATOR'}</span> &bull; <span>NPK: {user ? user.npk : 'MTM'}</span>
             </p>

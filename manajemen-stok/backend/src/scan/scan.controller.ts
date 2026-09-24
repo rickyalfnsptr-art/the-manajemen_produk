@@ -80,7 +80,10 @@ export class ScanController {
     const take = limit ? parseInt(limit, 10) : 15;
     const transactions = await this.prisma.stockTransaction.findMany({
       take,
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { createdAt: 'desc' },
+        { id: 'desc' },
+      ],
       include: {
         partCustomerStock: {
           include: { part: true },

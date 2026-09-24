@@ -2,24 +2,30 @@ export const formatDateIndo = (date: Date | string | null | undefined): string =
   if (!date) return '-';
   const d = new Date(date);
   if (isNaN(d.getTime())) return '-';
-  return d.toLocaleDateString('id-ID', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+  
+  const day = String(d.getDate()).padStart(2, '0');
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  const month = months[d.getMonth()];
+  const year = d.getFullYear();
+  
+  return `${day} ${month} ${year}`;
 };
 
 export const formatDateTimeIndo = (date: Date | string | null | undefined): string => {
   if (!date) return '-';
   const d = new Date(date);
   if (isNaN(d.getTime())) return '-';
-  return d.toLocaleString('id-ID', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+
+  const day = String(d.getDate()).padStart(2, '0');
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  const month = months[d.getMonth()];
+  const year = d.getFullYear();
+  
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const seconds = String(d.getSeconds()).padStart(2, '0');
+
+  return `${day} ${month} ${year} • ${hours}:${minutes}:${seconds} WIB`;
 };
 
 export const formatIndonesianDateTime = formatDateTimeIndo;
