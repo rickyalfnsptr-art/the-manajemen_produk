@@ -52,16 +52,16 @@ export const PtThresholdModal: React.FC<PtThresholdModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full overflow-hidden animate-scale-up">
+      <div className="bg-white rounded-lg shadow-2xl border border-slate-200 max-w-lg w-full overflow-hidden animate-scale-up">
         {/* Header */}
-        <div className="p-5 bg-gradient-to-r from-slate-900 to-slate-800 text-white flex items-center justify-between">
+        <div className="p-4 sm:p-5 bg-gradient-to-r from-slate-900 to-slate-800 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-white/10 rounded-xl">
+            <div className="p-2 bg-white/10 rounded-lg">
               <Building2 className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <h3 className="font-bold text-base">Atur Ambang Batas Min / Max</h3>
-              <p className="text-xs text-slate-300">Spesifik per kombinasi Part dan PT Customer</p>
+              <h3 className="font-bold text-sm sm:text-base">Ubah Ambang Batas</h3>
+              <p className="text-xs text-slate-300">Batas Min &amp; Max per Customer PT</p>
             </div>
           </div>
           <button
@@ -73,16 +73,16 @@ export const PtThresholdModal: React.FC<PtThresholdModalProps> = ({
         </div>
 
         {/* Content & Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4">
           {error && (
-            <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center gap-2">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 flex-shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {/* Info Card */}
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+          <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-500">Part Number:</span>
               <span className="font-mono font-bold text-slate-900">{stock.partNumber}</span>
@@ -92,22 +92,22 @@ export const PtThresholdModal: React.FC<PtThresholdModalProps> = ({
               <span className="font-semibold text-slate-800 truncate max-w-[240px]">{stock.partName}</span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500">Target Customer PT:</span>
+              <span className="text-slate-500">Customer PT:</span>
               <span className="px-2 py-0.5 font-bold rounded bg-blue-100 text-blue-800">
                 {stock.customerPt}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200">
-              <span className="text-slate-500">Stok Aktual Saat Ini:</span>
+              <span className="text-slate-500">Stok Saat Ini:</span>
               <span className="font-mono font-black text-slate-900">{stock.currentStock} pcs</span>
             </div>
           </div>
 
           {/* Inputs */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Batas Min Stock (Kritis)
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                Batas Min (Kritis)
               </label>
               <input
                 type="number"
@@ -115,14 +115,14 @@ export const PtThresholdModal: React.FC<PtThresholdModalProps> = ({
                 value={minStock}
                 onChange={(e) => setMinStock(Number(e.target.value))}
                 required
-                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 font-mono text-base font-bold focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 font-mono text-sm font-bold focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               />
-              <p className="text-[11px] text-slate-500 mt-1">🔴 Warning jika &le; Min</p>
+              <p className="text-[10px] text-slate-500 mt-1">🔴 Kritis jika ≤ Min</p>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Batas Max Stock (Overstock)
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                Batas Max (Overstock)
               </label>
               <input
                 type="number"
@@ -130,29 +130,29 @@ export const PtThresholdModal: React.FC<PtThresholdModalProps> = ({
                 value={maxStock}
                 onChange={(e) => setMaxStock(Number(e.target.value))}
                 required
-                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 font-mono text-base font-bold focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 font-mono text-sm font-bold focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               />
-              <p className="text-[11px] text-slate-500 mt-1">🔴 Warning jika &ge; Max</p>
+              <p className="text-[10px] text-slate-500 mt-1">🟡 Overstock jika ≥ Max</p>
             </div>
           </div>
 
-          <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800">
-            <strong>Catatan:</strong> Scan IN tetap diizinkan walaupun stok melebihi Max Stock. Batas Max hanya sebagai visual warning pada Dashboard untuk tim PPIC.
+          <div className="p-2.5 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-800">
+            <strong>Catatan:</strong> Batas Max berfungsi sebagai visual warning PPIC di Dashboard.
           </div>
 
           {/* Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition-colors"
+              className="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition-colors"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md hover:shadow-lg disabled:opacity-50 flex items-center gap-2 transition-all"
+              className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm disabled:opacity-50 flex items-center gap-1.5 transition-all"
             >
               <Save className="w-4 h-4" />
               {loading ? 'Menyimpan...' : 'Simpan Perubahan'}

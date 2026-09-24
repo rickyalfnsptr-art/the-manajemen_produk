@@ -75,10 +75,10 @@ export const PpicWhiteboardView: React.FC<PpicWhiteboardViewProps> = ({
           </div>
           <div>
             <h3 className="font-black text-sm uppercase tracking-wide">
-              PAPAN KONTROL PPIC WHFG (WHITEBOARD DIGITAL PER PT)
+              PAPAN KONTROL WHFG
             </h3>
             <p className="text-[11px] text-slate-300">
-              Monitoring ketersediaan stok fisik vs batas Min & Max (Menampilkan {filteredStocks.length} Part di {ptKeys.length} Customer PT)
+              Pemantauan stok fisik vs ambang batas per Customer PT
             </p>
           </div>
         </div>
@@ -87,8 +87,8 @@ export const PpicWhiteboardView: React.FC<PpicWhiteboardViewProps> = ({
         <div className="flex items-center gap-3 text-xs font-semibold bg-white/10 px-3 py-1.5 rounded-xl">
           <span className="text-slate-300 text-[10px] uppercase tracking-wider">Status:</span>
           <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[11px] font-bold">🟢 AMAN</span>
-          <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-300 text-[11px] font-bold">🔴 KRITIS (&le; Min)</span>
-          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[11px] font-bold">🟡 OVER (&ge; Max)</span>
+          <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-300 text-[11px] font-bold">🔴 KRITIS (≤ Min)</span>
+          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[11px] font-bold">🟡 OVER (≥ Max)</span>
         </div>
       </div>
 
@@ -146,8 +146,8 @@ export const PpicWhiteboardView: React.FC<PpicWhiteboardViewProps> = ({
                   <thead>
                     <tr className="bg-slate-50/90 border-b border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                       <th className="py-2.5 px-3 w-8 text-center">No</th>
-                      <th className="py-2.5 px-3">Part Name & Part No</th>
-                      <th className="py-2.5 px-2 text-center">Stok FG</th>
+                      <th className="py-2.5 px-3">Part Number &amp; Nama</th>
+                      <th className="py-2.5 px-2 text-center">Stok</th>
                       <th className="py-2.5 px-2 text-center bg-red-50/40 text-red-800">Min</th>
                       <th className="py-2.5 px-2 text-center bg-amber-50/40 text-amber-800">Max</th>
                       <th className="py-2.5 px-2 text-center">Status</th>

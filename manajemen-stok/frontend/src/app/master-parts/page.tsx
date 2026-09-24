@@ -161,21 +161,21 @@ export default function MasterPartsPage() {
 
   return (
     <AppLayout
-      title="Papan Ambang Batas (Whiteboard PT)"
-      subtitle="Papan kontrol & pengaturan batas Min (Kritis) dan Max (Overstock) per Part & per PT Customer"
+      title="Ambang Batas"
+      subtitle="Kontrol batas stok per Part &amp; Customer PT"
     >
       {/* 1. Main Clarity Banner */}
-      <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-        <div className="flex items-start sm:items-center gap-4">
-          <div className="p-3 bg-blue-50 text-blue-700 rounded-2xl border border-blue-100 flex-shrink-0">
-            <ShieldCheck className="w-7 h-7" />
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div className="flex items-start sm:items-center gap-3.5">
+          <div className="p-2.5 bg-blue-50 text-blue-700 rounded-2xl border border-blue-100 flex-shrink-0">
+            <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900">
-              Papan Kontrol Ambang Batas Stok (per Part & per PT Customer)
+            <h2 className="text-sm sm:text-base font-bold text-slate-900">
+              Ambang Batas Stok Part &amp; PT
             </h2>
-            <p className="text-xs text-slate-600 mt-1 max-w-3xl leading-relaxed">
-              Batas <strong>Min (Kritis)</strong> dan <strong>Max (Overstock)</strong> berdiri sendiri untuk setiap kombinasi Part Number dan PT Customer tujuannya (Standar Whiteboard PPIC MTM).
+            <p className="text-xs text-slate-500 mt-0.5 max-w-2xl leading-relaxed">
+              Batas stok <strong>Min</strong> dan <strong>Max</strong> per alokasi Part &amp; Customer PT.
             </p>
           </div>
         </div>
@@ -186,10 +186,10 @@ export default function MasterPartsPage() {
             <button
               type="button"
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs hover:shadow transition-all"
             >
               <PlusCircle className="w-4 h-4" />
-              + Alokasikan Part ke PT
+              + Alokasi Part
             </button>
           )}
 
@@ -253,7 +253,7 @@ export default function MasterPartsPage() {
           <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4 text-blue-600" />
             <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-              Filter Berdasarkan Customer PT:
+              Pilih Customer PT:
             </span>
           </div>
 
@@ -263,7 +263,7 @@ export default function MasterPartsPage() {
             onChange={(e) => setSelectedPt(e.target.value)}
             className="text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-800 outline-none focus:ring-2 focus:ring-blue-500 max-w-sm truncate cursor-pointer shadow-xs"
           >
-            <option value="ALL">🏢 Tampilkan Semua PT ({customerPts.length} Customer)</option>
+            <option value="ALL">🏢 Semua PT ({customerPts.length} Customer)</option>
             {customerPts.map((pt, idx) => (
               <option key={idx} value={pt}>
                 {pt}
@@ -308,7 +308,7 @@ export default function MasterPartsPage() {
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Cari Part Number, Nama Part, atau Customer PT..."
+            placeholder="Cari Part No, Nama Part, atau Customer PT..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-xs"
@@ -355,12 +355,11 @@ export default function MasterPartsPage() {
             <div className="flex items-center gap-2">
               <TableIcon className="w-4 h-4 text-blue-600" />
               <span>
-                Daftar Ambang Batas Part per PT (Menampilkan <b>{filteredAllocations.length}</b> Alokasi
-                {statusFilter !== 'ALL' && ` • Filter Status: ${statusFilter}`})
+                Daftar Ambang Batas ({filteredAllocations.length} Alokasi)
               </span>
             </div>
             <span className="text-slate-500 text-[11px] font-normal">
-              {canEdit ? '💡 Klik tombol Ubah Min/Max untuk memperbarui batas' : '🔒 Mode Hanya Lihat'}
+              {canEdit ? 'Klik Ubah Min/Max untuk memperbarui batas' : 'Mode Hanya Lihat'}
             </span>
           </div>
 
@@ -368,12 +367,12 @@ export default function MasterPartsPage() {
             <table className="w-full text-left text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50/80 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  <th className="py-3 px-4">Customer PT Tujuan</th>
-                  <th className="py-3 px-4">Part Number & Deskripsi</th>
-                  <th className="py-3 px-4 text-center">Batas Min (Kritis)</th>
-                  <th className="py-3 px-4 text-center">Batas Max (Overstock)</th>
-                  <th className="py-3 px-4 text-center">Stok Terkini</th>
-                  <th className="py-3 px-4 text-center">Status Kesehatan</th>
+                  <th className="py-3 px-4">Customer PT</th>
+                  <th className="py-3 px-4">Part Number &amp; Nama</th>
+                  <th className="py-3 px-4 text-center">Min</th>
+                  <th className="py-3 px-4 text-center">Max</th>
+                  <th className="py-3 px-4 text-center">Stok Fisik</th>
+                  <th className="py-3 px-4 text-center">Status</th>
                   <th className="py-3 px-4 text-center">Aksi</th>
                 </tr>
               </thead>

@@ -209,9 +209,19 @@ export const getRecentTransactions = async (limit = 20): Promise<StockTransactio
 export const getMasterParts = async (): Promise<MasterPart[]> => {
   try {
     const res = await api.get('/master-parts', { params: { limit: 1000 } });
-    if (Array.isArray(res.data)) return res.data;
-    if (Array.isArray(res.data?.data)) return res.data.data;
-    return [];
+    const rawList = Array.isArray(res.data)
+      ? res.data
+      : Array.isArray(res.data?.data)
+      ? res.data.data
+      : [];
+    return rawList.map((part: any) => ({
+      ...part,
+      customerStocks: (part.customerStocks || []).map((cs: any) => ({
+        ...cs,
+        customerPt: cs.customerPt || cs.customerName || '',
+        customerName: cs.customerName || cs.customerPt || '',
+      })),
+    }));
   } catch (err) {
     console.error('Failed to fetch master parts', err);
     return [];
@@ -254,6 +264,29 @@ export const createOrAssignPartAllocation = async (payload: {
 };
 
 // --- Tracking Helpers ---
+export const getAgingOverview = async (params?: {
+  customerPt?: string;
+  agingCategory?: string;
+  status?: string;
+}): Promise<{
+  success: boolean;
+  data?: {
+    summary: import('@/types').AgingSummary;
+    lots: import('@/types').StockLot[];
+  };
+  error?: string;
+}> => {
+  try {
+    const res = await api.get('/tracking/overview', { params });
+    return { success: true, data: res.data?.data };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err.response?.data?.message || 'Gagal memuat ringkasan aging gudang',
+    };
+  }
+};
+
 export const getPartTracking = async (
   partNumber: string
 ): Promise<{
@@ -275,3 +308,4 @@ export const getPartTracking = async (
     };
   }
 };
+

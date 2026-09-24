@@ -7,12 +7,14 @@ import { TopNavbar } from './TopNavbar';
 interface AppLayoutProps {
   title: string;
   subtitle?: string;
+  fullHeight?: boolean;
   children: React.ReactNode;
 }
 
 export const AppLayout: React.FC<AppLayoutProps> = ({
   title,
   subtitle,
+  fullHeight = false,
   children,
 }) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -40,17 +42,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         </div>
       )}
 
-      {/* 3. Main Viewport Container (Header is fixed at top, only main content scrolls) */}
+      {/* 3. Main Viewport Container */}
       <div className="flex-1 flex flex-col min-w-0 lg:ml-64 h-screen overflow-hidden">
-        {/* Fixed Top Navbar (Never moves on scroll) */}
+        {/* Fixed Top Navbar */}
         <TopNavbar
           title={title}
           subtitle={subtitle}
           onToggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
         />
 
-        {/* Independent Scrollable Main Content Container */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-3.5 sm:p-5 lg:p-7 max-w-7xl w-full mx-auto space-y-6">
+        {/* Main Content Container */}
+        <main
+          className={`flex-1 w-full mx-auto ${
+            fullHeight
+              ? 'h-[calc(100vh-56px)] overflow-hidden p-3 sm:p-4 max-w-7xl flex flex-col justify-between'
+              : 'overflow-y-auto overflow-x-hidden p-3.5 sm:p-5 lg:p-6 max-w-7xl space-y-6'
+          }`}
+        >
           {children}
         </main>
       </div>

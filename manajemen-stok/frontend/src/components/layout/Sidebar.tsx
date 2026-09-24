@@ -9,6 +9,7 @@ import {
   Activity,
   LayoutGrid,
   QrCode,
+  Search,
   Clock,
   Boxes,
   LogOut,
@@ -56,39 +57,35 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
     return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase().substring(0, 2);
   };
 
-  // Grouped Navigation following MTM Reference System
+  // Grouped Navigation following MTM Standards
   const categories = [
     {
-      title: 'MAIN MENU',
+      title: 'MENU UTAMA',
       items: [
         {
-          name: 'Dashboard Statistik',
+          name: 'Dashboard',
           href: '/statistics',
           icon: LayoutDashboard,
-          desc: 'Grafik mutasi IN/OUT & analisis inventori',
         },
         {
           name: 'Monitoring Stok',
           href: '/dashboard',
-          icon: Activity,
-          desc: 'Pantauan realtime & prioritas part kritis',
+          icon: Boxes,
         },
       ],
     },
     {
-      title: 'ACTIVITY',
+      title: 'AKTIVITAS',
       items: [
         {
-          name: 'Zebra Scanner',
+          name: 'Terminal Scan',
           href: '/scan',
           icon: QrCode,
-          desc: 'Scan IN/OUT Kanban & Manual Fallback',
         },
         {
-          name: 'Tracking & Aging',
+          name: 'Lacak Part',
           href: '/tracking',
-          icon: Clock,
-          desc: 'Riwayat siklus hidup & durasi simpan',
+          icon: Search,
         },
       ],
     },
@@ -96,10 +93,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
       title: 'MASTER DATA',
       items: [
         {
-          name: 'Papan Ambang Batas (Whiteboard PT)',
+          name: 'Ambang Batas',
           href: '/master-parts',
           icon: Boxes,
-          desc: 'Papan kontrol Min/Max per Part & per PT',
         },
       ],
     },
@@ -116,7 +112,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
             className="h-9 object-contain"
           />
           <span className="text-[9px] font-extrabold text-blue-700 tracking-wider mt-1 uppercase">
-            WHFG Management System
+            WHFG System
           </span>
         </div>
 
@@ -131,14 +127,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
         )}
       </div>
 
-      {/* Categorized Navigation (Smooth Independent Scroll) */}
-      <nav className="flex-1 p-3.5 space-y-5 overflow-y-auto scrollbar-thin">
+      {/* Categorized Navigation */}
+      <nav className="flex-1 p-3 space-y-4 overflow-y-auto scrollbar-thin">
         {categories.map((cat) => (
           <div key={cat.title} className="space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block px-2.5 mb-1">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block px-3 mb-1">
               {cat.title}
             </span>
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               {cat.items.map((item) => {
                 const Icon = item.icon;
                 const isActive =
@@ -151,24 +147,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
                     onClick={() => {
                       if (isMobile && onCloseMobile) onCloseMobile();
                     }}
-                    className={`group flex items-start gap-3 px-3 py-2 rounded-xl transition-all duration-150 font-medium ${isActive
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                    className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 font-medium ${
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-sm'
                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                      }`}
+                    }`}
                   >
                     <Icon
-                      className={`w-4 h-4 mt-0.5 flex-shrink-0 transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-blue-600'
-                        }`}
+                      className={`w-4 h-4 flex-shrink-0 transition-colors ${
+                        isActive ? 'text-white' : 'text-slate-400 group-hover:text-blue-600'
+                      }`}
                     />
-                    <div className="min-w-0">
-                      <div className="text-xs font-bold leading-tight">{item.name}</div>
-                      <div
-                        className={`text-[10px] font-normal truncate mt-0.5 ${isActive ? 'text-blue-100' : 'text-slate-400'
-                          }`}
-                      >
-                        {item.desc}
-                      </div>
-                    </div>
+                    <span className="text-xs font-bold leading-tight">{item.name}</span>
+                    {isActive && (
+                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white" />
+                    )}
                   </Link>
                 );
               })}
@@ -178,16 +171,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
       </nav>
 
       {/* User Footer matching MTM Reference style */}
-      <div className="p-3 border-t border-slate-200 bg-slate-50/70">
-        <div className="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200 shadow-xs mb-2">
-          <div className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-700 font-bold rounded-lg text-xs border border-blue-200 flex-shrink-0">
+      <div className="p-3 border-t border-slate-200 bg-slate-50/70" suppressHydrationWarning>
+        <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white border border-slate-200 shadow-xs mb-2" suppressHydrationWarning>
+          <div className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-700 font-bold rounded-lg text-xs border border-blue-200 flex-shrink-0" suppressHydrationWarning>
             {getInitials(user?.fullName || user?.username)}
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-bold text-slate-900 truncate">
+          <div className="min-w-0 flex-1" suppressHydrationWarning>
+            <p className="text-xs font-bold text-slate-900 truncate" suppressHydrationWarning>
               {user ? user.fullName : 'Operator MTM'}
             </p>
-            <p className="text-[10px] text-slate-500 truncate flex items-center gap-1 font-semibold">
+            <p className="text-[10px] text-slate-500 truncate flex items-center gap-1 font-semibold" suppressHydrationWarning>
               <ShieldCheck className="w-3 h-3 text-emerald-600 flex-shrink-0" />
               <span>{user ? user.role : 'OPERATOR'}</span> &bull; <span>NPK: {user ? user.npk : 'MTM'}</span>
             </p>
@@ -196,10 +189,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
 
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 py-1.5 px-3 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 hover:text-red-700 border border-red-200 transition-colors"
+          className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 hover:text-red-700 border border-red-200 transition-colors"
         >
           <LogOut className="w-3.5 h-3.5" />
-          Keluar Sistem (Logout)
+          Keluar
         </button>
       </div>
     </aside>

@@ -328,6 +328,44 @@ export class StockService {
             inTimestamp: txDate,
           },
         });
+      } else if (status === 'OUT') {
+        let remainingToDeduct = qty;
+        const activeLots = await tx.stockLot.findMany({
+          where: {
+            partCustomerStockId: ptStock.id,
+            status: LotStatus.IN_STOCK,
+          },
+          orderBy: { inTimestamp: 'asc' },
+        });
+
+        for (const activeLot of activeLots) {
+          if (remainingToDeduct <= 0) break;
+          lot = activeLot;
+          const durationMinutes = Math.floor(
+            (txDate.getTime() - new Date(activeLot.inTimestamp).getTime()) / (1000 * 60)
+          );
+
+          if (activeLot.qty <= remainingToDeduct) {
+            remainingToDeduct -= activeLot.qty;
+            await tx.stockLot.update({
+              where: { id: activeLot.id },
+              data: {
+                qty: 0,
+                status: LotStatus.OUT_STOCK,
+                outTimestamp: txDate,
+                durationMinutes,
+              },
+            });
+          } else {
+            await tx.stockLot.update({
+              where: { id: activeLot.id },
+              data: {
+                qty: activeLot.qty - remainingToDeduct,
+              },
+            });
+            remainingToDeduct = 0;
+          }
+        }
       }
 
       const updatedPtStock = await tx.partCustomerStock.update({

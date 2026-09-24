@@ -2,6 +2,7 @@ export type Role = 'PPIC' | 'ADMIN' | 'OPERATOR' | 'LEADER' | string;
 export type StockStatus = 'NORMAL' | 'UNDER_MIN' | 'OVER_MAX' | 'RED_MIN' | 'GREEN_NORMAL' | 'RED_MAX' | string;
 export type LotStatus = 'IN_STOCK' | 'OUT_STOCK';
 export type TransactionType = 'IN' | 'OUT' | 'SCAN_IN' | 'SCAN_OUT' | 'MANUAL_IN' | 'MANUAL_OUT' | string;
+export type AgingCategory = 'FRESH' | 'NORMAL' | 'WARNING' | 'CRITICAL';
 
 export interface User {
   id: string;
@@ -18,6 +19,7 @@ export interface PartCustomerStock {
   partNumber: string;
   partName: string;
   customerPt: string;
+  customerPartNumber?: string;
   minStock: number;
   maxStock: number;
   currentStock: number;
@@ -33,6 +35,8 @@ export interface MasterPart {
   partNumber: string;
   partName: string;
   category?: string | null;
+  location?: string | null;
+  defaultLine?: string | null;
   standardBoxQty?: number;
   isActive?: boolean;
   customerStocks?: PartCustomerStock[];
@@ -42,22 +46,47 @@ export interface StockLot {
   id: string;
   lotNumber: string;
   partNumber: string;
+  partName?: string;
+  category?: string;
   customerPt: string;
+  customerPartNumber?: string;
   qty: number;
   status: LotStatus | string;
   originLineOrVendor?: string | null;
   createdAt: string;
   outTimestamp?: string | null;
   dwellHours?: number;
-  dwellDays?: string;
+  dwellDays?: number;
+  dwellFormatted?: string;
+  agingCategory?: AgingCategory;
+  agingPercentage?: number;
 }
+
+export interface AgingSummary {
+  totalActiveLots: number;
+  totalActiveQty: number;
+  avgDwellHours: number;
+  avgDwellDays: number;
+  avgDwellFormatted: string;
+  agingBreakdown: {
+    fresh: number;
+    normal: number;
+    warning: number;
+    critical: number;
+  };
+}
+
 
 export interface StockTransaction {
   id: string;
   type: TransactionType;
+  transactionType?: string;
   partNumber: string;
   customerPt: string;
   qty: number;
+  previousStock?: number;
+  currentStock?: number;
+  uniqueTag?: string | null;
   doorOrLineLocation?: string | null;
   originLineOrVendor?: string | null;
   destinationDoorOrPt?: string | null;

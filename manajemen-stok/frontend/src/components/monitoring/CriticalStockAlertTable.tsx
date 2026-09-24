@@ -1,21 +1,15 @@
 'use client';
 
 import React from 'react';
-import { PartCustomerStock } from '../../types';
-import { AlertTriangle, TrendingDown, TrendingUp, Sliders, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { PartCustomerStock } from '@/types';
+import { AlertTriangle, TrendingDown, TrendingUp, ArrowUpRight, CheckCircle2, Clock, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 interface CriticalStockAlertTableProps {
   stocks: PartCustomerStock[];
-  onEditThreshold?: (stock: PartCustomerStock) => void;
-  userRole?: string;
 }
 
-export const CriticalStockAlertTable: React.FC<CriticalStockAlertTableProps> = ({
-  stocks,
-  onEditThreshold,
-  userRole,
-}) => {
+export const CriticalStockAlertTable: React.FC<CriticalStockAlertTableProps> = ({ stocks }) => {
   // Filter for critical (<= Min) and overstock (>= Max)
   const criticalItems = stocks
     .filter(
@@ -36,55 +30,57 @@ export const CriticalStockAlertTable: React.FC<CriticalStockAlertTableProps> = (
 
   const underMinItems = criticalItems.filter((i) => i.currentStock <= i.minStock);
   const overMaxItems = criticalItems.filter((i) => i.currentStock >= i.maxStock);
-  const canEdit = userRole === 'ADMIN' || userRole === 'PPIC';
 
   if (criticalItems.length === 0) {
     return (
-      <div className="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm flex items-center justify-between">
+      <div className="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
-            <CheckCircle2 className="w-5 h-5" />
+          <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl border border-emerald-100 flex-shrink-0">
+            <CheckCircle2 className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-800">Semua Stok Sesuai Ambang Batas Ideal</h3>
-            <p className="text-xs text-slate-500">Tidak ada part yang berada di bawah Min Stock atau di atas Max Stock saat ini.</p>
+            <h3 className="text-sm font-bold text-slate-800">Semua Stok Berada dalam Batas Ideal</h3>
+            <p className="text-xs text-slate-500">
+              Tidak ada part number yang berada di bawah ambang batas Min atau melebihi batas Max saat ini.
+            </p>
           </div>
         </div>
-        <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg">
-          🟢 Status Prima
+        <span className="px-3.5 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-xl flex items-center gap-1.5 flex-shrink-0">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          Status Inventori Aman
         </span>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-red-200 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-2xl border border-rose-200 shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="p-4 bg-gradient-to-r from-red-50 to-orange-50 border-b border-red-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-red-600 text-white rounded-xl shadow-xs">
+      <div className="p-4 sm:p-5 bg-gradient-to-r from-rose-50 via-orange-50 to-white border-b border-rose-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex items-start sm:items-center gap-3">
+          <div className="p-2.5 bg-red-600 text-white rounded-2xl shadow-md flex-shrink-0">
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">
-                Daftar Part Kritis & Memerlukan Perhatian PPIC
+                Peringatan Dini Part Kritis (Early Warning System)
               </h3>
-              <span className="px-2 py-0.5 bg-red-600 text-white text-[10px] font-black rounded-full">
-                {underMinItems.length} Kritis &bull; {overMaxItems.length} Overstock
+              <span className="px-2.5 py-0.5 bg-red-600 text-white text-[10px] font-black rounded-full shadow-xs">
+                {underMinItems.length} Kritis Menipis &bull; {overMaxItems.length} Overstock
               </span>
             </div>
             <p className="text-xs text-slate-600 mt-0.5">
-              Part dengan stok $\le$ batas Min memerlukan suplai produksi/vendor segera untuk mencegah <em>line stop</em> delivery.
+              Part dengan stok $\le$ batas Min memerlukan suplai produksi segera untuk mencegah hambatan pengiriman customer.
             </p>
           </div>
         </div>
 
         <Link
           href="/scan"
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors self-end sm:self-center"
+          className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition-all self-end sm:self-center flex-shrink-0"
         >
-          <span>Scan Barang Masuk (IN)</span>
+          <span>Scan Masuk (IN)</span>
           <ArrowUpRight className="w-3.5 h-3.5" />
         </Link>
       </div>
@@ -93,42 +89,51 @@ export const CriticalStockAlertTable: React.FC<CriticalStockAlertTableProps> = (
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="bg-slate-50 border-b border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+            <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
               <th className="py-2.5 px-4">Customer PT</th>
-              <th className="py-2.5 px-4">Part Number & Deskripsi</th>
+              <th className="py-2.5 px-4">Part Number &amp; Deskripsi</th>
               <th className="py-2.5 px-3 text-center">Stok Terkini</th>
               <th className="py-2.5 px-3 text-center">Batas Min</th>
               <th className="py-2.5 px-3 text-center">Batas Max</th>
-              <th className="py-2.5 px-3 text-center">Kekurangan (Defisit)</th>
-              <th className="py-2.5 px-3 text-center">Status</th>
-              <th className="py-2.5 px-3 text-center">Aksi</th>
+              <th className="py-2.5 px-3 text-center">Selisih</th>
+              <th className="py-2.5 px-3 text-center">Status Peringatan</th>
+              <th className="py-2.5 px-4 text-center">Aksi Pelacakan</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {criticalItems.slice(0, 8).map((item) => {
+            {criticalItems.slice(0, 6).map((item) => {
               const isUnderMin = item.currentStock <= item.minStock;
               const deficit = item.minStock - item.currentStock;
 
               return (
-                <tr key={item.id} className={`hover:bg-slate-50/80 transition-colors ${isUnderMin ? 'bg-red-50/20' : 'bg-amber-50/20'}`}>
+                <tr
+                  key={item.id}
+                  className={`hover:bg-blue-50/30 transition-colors ${
+                    isUnderMin ? 'bg-red-50/20' : 'bg-amber-50/20'
+                  }`}
+                >
                   <td className="py-3 px-4">
-                    <span className="font-bold text-slate-800 px-2 py-0.5 rounded bg-white border border-slate-200 inline-block text-[11px]">
+                    <span className="font-bold text-slate-800 px-2.5 py-1 rounded-lg bg-white border border-slate-200 inline-block text-[11px] shadow-2xs">
                       {item.customerPt}
                     </span>
                   </td>
 
                   <td className="py-3 px-4">
-                    <div className="font-mono font-bold text-slate-900 text-xs">
+                    <div className="font-mono font-bold text-blue-700 text-xs">
                       {item.partNumber}
                     </div>
-                    <div className="text-[11px] text-slate-500 font-medium truncate max-w-[220px]">
+                    <div className="text-[11px] text-slate-600 font-medium truncate max-w-[220px]">
                       {item.partName}
                     </div>
                   </td>
 
                   <td className="py-3 px-3 text-center font-mono font-black text-sm">
-                    <span className={`px-2 py-0.5 rounded ${isUnderMin ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800'}`}>
-                      {item.currentStock}
+                    <span
+                      className={`px-2.5 py-0.5 rounded-md ${
+                        isUnderMin ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800'
+                      }`}
+                    >
+                      {item.currentStock.toLocaleString('id-ID')}
                     </span>
                   </td>
 
@@ -142,41 +147,34 @@ export const CriticalStockAlertTable: React.FC<CriticalStockAlertTableProps> = (
 
                   <td className="py-3 px-3 text-center font-mono font-bold">
                     {isUnderMin ? (
-                      <span className="text-red-700 font-black">
-                        -{deficit} pcs
-                      </span>
+                      <span className="text-red-700 font-black">-{deficit} pcs</span>
                     ) : (
-                      <span className="text-amber-700">
-                        +{item.currentStock - item.maxStock} pcs
-                      </span>
+                      <span className="text-amber-700">+{item.currentStock - item.maxStock} pcs</span>
                     )}
                   </td>
 
                   <td className="py-3 px-3 text-center">
                     {isUnderMin ? (
-                      <span className="inline-block px-2.5 py-1 rounded-lg bg-red-600 text-white font-black text-[10px] shadow-xs">
-                        🔴 KRITIS
+                      <span className="inline-block px-2.5 py-1 rounded-full bg-red-600 text-white font-black text-[10px] shadow-xs">
+                        🔴 STOK MENIPIS
                       </span>
                     ) : (
-                      <span className="inline-block px-2.5 py-1 rounded-lg bg-amber-500 text-white font-bold text-[10px] shadow-xs">
+                      <span className="inline-block px-2.5 py-1 rounded-full bg-amber-500 text-white font-bold text-[10px] shadow-xs">
                         🟡 OVERSTOCK
                       </span>
                     )}
                   </td>
 
-                  <td className="py-3 px-3 text-center">
-                    {canEdit && onEditThreshold ? (
-                      <button
-                        type="button"
-                        onClick={() => onEditThreshold(item)}
-                        className="px-2.5 py-1 bg-white hover:bg-blue-50 text-blue-700 hover:text-blue-800 rounded-lg text-xs font-bold border border-blue-200 transition-all flex items-center justify-center gap-1 mx-auto shadow-2xs"
-                      >
-                        <Sliders className="w-3 h-3" />
-                        Ubah
-                      </button>
-                    ) : (
-                      <span className="text-slate-300">-</span>
-                    )}
+                  <td className="py-3 px-4 text-center">
+                    <Link
+                      href={`/tracking?partNumber=${encodeURIComponent(item.partNumber)}`}
+                      className="px-3 py-1.5 bg-white hover:bg-blue-600 text-blue-700 hover:text-white rounded-xl text-xs font-bold border border-blue-200 transition-all inline-flex items-center justify-center gap-1 shadow-2xs"
+                      title="Lacak Siklus & Riwayat Part Ini"
+                    >
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>Lacak</span>
+                      <ChevronRight className="w-3 h-3" />
+                    </Link>
                   </td>
                 </tr>
               );
@@ -185,9 +183,9 @@ export const CriticalStockAlertTable: React.FC<CriticalStockAlertTableProps> = (
         </table>
       </div>
 
-      {criticalItems.length > 8 && (
-        <div className="p-2.5 bg-slate-50 border-t border-slate-200 text-center text-xs text-slate-500 font-medium">
-          Menampilkan 8 dari total <strong>{criticalItems.length}</strong> part yang memerlukan perhatian. Lihat selengkapnya pada Papan Kontrol Whiteboard di bawah.
+      {criticalItems.length > 6 && (
+        <div className="p-3 bg-slate-50 border-t border-slate-200 text-center text-xs text-slate-600 font-medium">
+          Menampilkan 6 dari total <strong>{criticalItems.length}</strong> part yang memerlukan perhatian. Gunakan tabel di bawah untuk melihat daftar lengkap.
         </div>
       )}
     </div>

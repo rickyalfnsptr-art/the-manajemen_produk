@@ -37,7 +37,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
       <div
-        className={`w-full max-w-md rounded-3xl p-6 sm:p-8 text-center shadow-2xl border-4 transition-all transform scale-100 ${
+        className={`w-full max-w-md rounded-lg p-6 sm:p-8 text-center shadow-2xl border-2 transition-all transform scale-100 ${
           isSuccess
             ? 'bg-white border-emerald-500 shadow-emerald-500/20'
             : 'bg-white border-red-500 shadow-red-500/20'
@@ -46,19 +46,19 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
         {/* Status Icon */}
         <div className="flex justify-center mb-4">
           {isSuccess ? (
-            <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center animate-bounce">
-              <CheckCircle2 className="w-12 h-12" />
+            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center animate-bounce">
+              <CheckCircle2 className="w-10 h-10" />
             </div>
           ) : (
-            <div className="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center animate-pulse">
-              <XCircle className="w-12 h-12" />
+            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center animate-pulse">
+              <XCircle className="w-10 h-10" />
             </div>
           )}
         </div>
 
         {/* Big Status Heading */}
         <h2
-          className={`text-3xl font-black uppercase tracking-wider mb-2 ${
+          className={`text-2xl sm:text-3xl font-black uppercase tracking-wider mb-2 ${
             isSuccess ? 'text-emerald-600' : 'text-red-600'
           }`}
         >
@@ -66,7 +66,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
         </h2>
 
         {/* Message / Duplicate Error Text */}
-        <p className="text-base font-bold text-slate-800 mb-6">
+        <p className="text-sm sm:text-base font-bold text-slate-800 mb-6">
           {isDuplicate
             ? 'Gagal karena sudah discan'
             : result.message || result.error || (isSuccess ? 'Transaksi Scan Berhasil Dicatat' : 'Gagal memproses scan')}
@@ -74,7 +74,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
         {/* Scanned Details (if available) */}
         {result.transaction && (
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left space-y-2 mb-6 font-medium text-xs">
+          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-left space-y-2 mb-6 font-medium text-xs">
             <div className="flex justify-between items-center pb-2 border-b border-slate-200">
               <span className="text-slate-500">Tipe Transaksi:</span>
               <span
@@ -123,13 +123,13 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
         {/* Action Button */}
         <button
           onClick={onClose}
-          className={`w-full py-3 px-6 rounded-xl font-bold text-sm text-white shadow-lg transition-all ${
+          className={`w-full py-2.5 px-5 rounded-lg font-bold text-xs sm:text-sm text-white shadow-sm transition-all ${
             isSuccess
-              ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/30'
-              : 'bg-red-600 hover:bg-red-700 shadow-red-600/30'
+              ? 'bg-emerald-600 hover:bg-emerald-700'
+              : 'bg-red-600 hover:bg-red-700'
           }`}
         >
-          Tutup & Lanjutkan Scan
+          Tutup &amp; Lanjutkan Scan
         </button>
       </div>
     </div>

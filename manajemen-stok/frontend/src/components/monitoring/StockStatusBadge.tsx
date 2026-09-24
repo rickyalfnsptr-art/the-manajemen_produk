@@ -1,6 +1,7 @@
+'use client';
+
 import React from 'react';
 import { StockStatus } from '../../types';
-import { AlertTriangle, CheckCircle, Flame, TrendingDown, TrendingUp } from 'lucide-react';
 
 interface StockStatusBadgeProps {
   status: StockStatus | string;
@@ -17,26 +18,23 @@ export const StockStatusBadge: React.FC<StockStatusBadgeProps> = ({
 }) => {
   if (status === 'UNDER_MIN' || status === 'RED_MIN' || (minStock > 0 && currentStock <= minStock)) {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-300 animate-pulse">
-        <TrendingDown className="w-3.5 h-3.5 text-red-600" />
-        <span>🔴 KRITIS (&le; {minStock})</span>
+      <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-xs font-bold bg-red-600 text-white shadow-2xs whitespace-nowrap">
+        Kritis (&le; {minStock})
       </span>
     );
   }
 
   if (status === 'OVER_MAX' || status === 'RED_MAX' || (maxStock > 0 && currentStock >= maxStock)) {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
-        <TrendingUp className="w-3.5 h-3.5 text-amber-600" />
-        <span>🔴 OVERSTOCK (&ge; {maxStock})</span>
+      <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500 text-white shadow-2xs whitespace-nowrap">
+        Overstock (&ge; {maxStock})
       </span>
     );
   }
 
   return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-300">
-      <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-      <span>🟢 NORMAL</span>
+    <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-600 text-white shadow-2xs whitespace-nowrap">
+      Aman (Normal)
     </span>
   );
 };

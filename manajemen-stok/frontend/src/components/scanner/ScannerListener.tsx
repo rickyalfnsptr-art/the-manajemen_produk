@@ -54,7 +54,7 @@ export const ScannerListener: React.FC<ScannerListenerProps> = ({
         {/* IN / OUT Selector */}
         <div>
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-            Pilih Mode Transaksi Scan
+            Mode Transaksi
           </label>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -70,7 +70,7 @@ export const ScannerListener: React.FC<ScannerListenerProps> = ({
               }`}
             >
               <ArrowDownToLine className="w-5 h-5" />
-              SCAN IN (Masuk)
+              SCAN IN
             </button>
             <button
               type="button"
@@ -85,7 +85,7 @@ export const ScannerListener: React.FC<ScannerListenerProps> = ({
               }`}
             >
               <ArrowUpFromLine className="w-5 h-5" />
-              SCAN OUT (Keluar)
+              SCAN OUT
             </button>
           </div>
         </div>
@@ -93,7 +93,7 @@ export const ScannerListener: React.FC<ScannerListenerProps> = ({
         {/* Door / Line Selection */}
         <div>
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-            Posisi / Pintu Gudang (Multi-Door)
+            Pintu / Lokasi Gudang
           </label>
           <select
             value={doorOrLine}
@@ -103,9 +103,9 @@ export const ScannerListener: React.FC<ScannerListenerProps> = ({
             <option value="PINTU-1">Pintu 1 (Line Machining A)</option>
             <option value="PINTU-2">Pintu 2 (Line Machining B)</option>
             <option value="PINTU-3">Pintu 3 (Line Stamping)</option>
-            <option value="PINTU-VENDOR">Pintu Penerimaan Vendor Subcont</option>
-            <option value="DOCK-DELIVERY-1">Dock Delivery 1 (Toyota / TAM)</option>
-            <option value="DOCK-DELIVERY-2">Dock Delivery 2 (ADM / HPM / Suzuki)</option>
+            <option value="PINTU-VENDOR">Pintu Penerimaan Vendor</option>
+            <option value="DOCK-DELIVERY-1">Dock 1 (Toyota / TAM)</option>
+            <option value="DOCK-DELIVERY-2">Dock 2 (ADM / Suzuki / Honda)</option>
           </select>
         </div>
       </div>
@@ -122,7 +122,7 @@ export const ScannerListener: React.FC<ScannerListenerProps> = ({
           onChange={(e) => setBarcodeInput(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={isProcessing}
-          placeholder="Arahkan Barcode Scanner ke sini atau ketik kode Kanban..."
+          placeholder="Scan barcode Kanban atau ketik kode..."
           className="w-full pl-12 pr-28 py-4 bg-slate-900 text-white font-mono text-base sm:text-lg rounded-2xl border-2 border-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none placeholder-slate-500 transition-all shadow-inner"
         />
         <button
@@ -141,7 +141,7 @@ export const ScannerListener: React.FC<ScannerListenerProps> = ({
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
             <Radio className="w-3.5 h-3.5 text-blue-600" />
-            Contoh Format Barcode Kanban MTM (Klik untuk Simulasi):
+            Format Barcode Kanban (Simulasi):
           </span>
           <span className="text-[10px] text-slate-400">Barcode QR / Code128</span>
         </div>

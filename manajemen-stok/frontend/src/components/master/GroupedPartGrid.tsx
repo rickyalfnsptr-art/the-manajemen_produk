@@ -34,7 +34,7 @@ export const GroupedPartGrid: React.FC<GroupedPartGridProps> = ({
         return (
           <div
             key={part.id}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden transition-all hover:border-slate-300"
+            className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden transition-all hover:border-slate-300"
           >
             {/* Header / Summary row */}
             <div
@@ -69,13 +69,13 @@ export const GroupedPartGrid: React.FC<GroupedPartGridProps> = ({
 
               <div className="flex items-center gap-4 sm:gap-6 self-end sm:self-center">
                 <div className="text-right">
-                  <div className="text-xs text-slate-400 font-medium">Customer Terdaftar</div>
+                  <div className="text-xs text-slate-400 font-medium">Customer</div>
                   <div className="text-sm font-bold text-slate-800">
-                    {allocations.length} PT Customer
+                    {allocations.length} PT
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xs text-slate-400 font-medium">Total Stok WHFG</div>
+                  <div className="text-xs text-slate-400 font-medium">Total Stok</div>
                   <div className="font-mono font-black text-base text-blue-700">
                     {totalStock.toLocaleString('id-ID')} pcs
                   </div>
@@ -88,19 +88,19 @@ export const GroupedPartGrid: React.FC<GroupedPartGridProps> = ({
               <div className="px-4 pb-4 pt-2 border-t border-slate-100 bg-slate-50/40">
                 <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                   <Building2 className="w-4 h-4 text-slate-400" />
-                  Rincian Stok & Batas Min/Max per Customer PT:
+                  Rincian Stok per PT:
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {allocations.map((stock) => (
                     <div
                       key={stock.id}
-                      className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-blue-200 transition-all"
+                      className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between hover:border-blue-200 transition-all"
                     >
                       <div>
                         <div className="flex items-center justify-between gap-2 mb-2">
-                          <span className="px-2.5 py-1 rounded-md text-xs font-black bg-blue-50 text-blue-800 border border-blue-100">
-                            {stock.customerPt}
+                          <span className="px-2.5 py-1 rounded-md text-xs font-black bg-blue-50 text-blue-800 border border-blue-100 truncate max-w-[180px]" title={stock.customerPt || (stock as any).customerName}>
+                            {stock.customerPt || (stock as any).customerName || 'PT Customer'}
                           </span>
                           <StockStatusBadge
                             status={stock.stockStatus}

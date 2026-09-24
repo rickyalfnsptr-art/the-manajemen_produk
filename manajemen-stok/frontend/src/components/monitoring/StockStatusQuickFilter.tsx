@@ -25,43 +25,43 @@ export const StockStatusQuickFilter: React.FC<StockStatusQuickFilterProps> = ({
       label: 'Semua Status Stok',
       count: counts.total,
       icon: Layers,
-      activeColor: 'bg-blue-600 text-white shadow-md shadow-blue-500/20 border-blue-600',
-      badgeColor: 'bg-white/20 text-white',
-      inactiveColor: 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200',
-      inactiveBadge: 'bg-slate-100 text-slate-700',
+      activeColor: 'bg-blue-600 text-white shadow-sm border-blue-600',
+      badgeColor: 'bg-slate-900 text-white font-bold',
+      inactiveColor: 'bg-white text-slate-800 hover:bg-slate-50 border-slate-200 hover:border-blue-300',
+      inactiveBadge: 'bg-slate-100 text-slate-900 border border-slate-300 font-bold',
     },
     {
       id: 'RED_MIN',
-      label: '🔴 Kritis (<= Min Stock)',
+      label: 'Kritis (≤ Min Stock)',
       desc: 'Perlu Suplai Segera',
       count: counts.underMin,
       icon: TrendingDown,
-      activeColor: 'bg-red-600 text-white shadow-md shadow-red-500/30 border-red-600',
-      badgeColor: 'bg-white/20 text-white',
-      inactiveColor: 'bg-red-50/50 text-red-700 hover:bg-red-50 border-red-200',
-      inactiveBadge: 'bg-red-100 text-red-800 font-black',
+      activeColor: 'bg-red-600 text-white shadow-sm border-red-600',
+      badgeColor: 'bg-white text-red-700 font-bold',
+      inactiveColor: 'bg-white text-slate-800 hover:bg-slate-50 border-slate-200 hover:border-red-300',
+      inactiveBadge: 'bg-red-600 text-white font-bold',
     },
     {
       id: 'RED_MAX',
-      label: '🟡 Overstock (>= Max)',
+      label: 'Overstock (≥ Max)',
       desc: 'Kapasitas Berlebih',
       count: counts.overMax,
       icon: TrendingUp,
-      activeColor: 'bg-amber-500 text-white shadow-md shadow-amber-500/30 border-amber-500',
-      badgeColor: 'bg-white/20 text-white',
-      inactiveColor: 'bg-amber-50/50 text-amber-700 hover:bg-amber-50 border-amber-200',
-      inactiveBadge: 'bg-amber-100 text-amber-800 font-black',
+      activeColor: 'bg-amber-500 text-white shadow-sm border-amber-500',
+      badgeColor: 'bg-white text-amber-800 font-bold',
+      inactiveColor: 'bg-white text-slate-800 hover:bg-slate-50 border-slate-200 hover:border-amber-300',
+      inactiveBadge: 'bg-amber-500 text-white font-bold',
     },
     {
       id: 'GREEN_NORMAL',
-      label: '🟢 Aman / Normal',
+      label: 'Aman / Normal',
       desc: 'Stok Ideal',
       count: counts.normal,
       icon: CheckCircle2,
-      activeColor: 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 border-emerald-600',
-      badgeColor: 'bg-white/20 text-white',
-      inactiveColor: 'bg-emerald-50/50 text-emerald-700 hover:bg-emerald-50 border-emerald-200',
-      inactiveBadge: 'bg-emerald-100 text-emerald-800 font-bold',
+      activeColor: 'bg-emerald-600 text-white shadow-sm border-emerald-600',
+      badgeColor: 'bg-white text-emerald-800 font-bold',
+      inactiveColor: 'bg-white text-slate-800 hover:bg-slate-50 border-slate-200 hover:border-emerald-300',
+      inactiveBadge: 'bg-emerald-600 text-white font-bold',
     },
   ];
 
@@ -96,7 +96,7 @@ export const StockStatusQuickFilter: React.FC<StockStatusQuickFilterProps> = ({
               key={opt.id}
               type="button"
               onClick={() => onStatusChange(opt.id)}
-              className={`p-3 rounded-2xl border transition-all text-left flex items-center justify-between gap-3 ${
+              className={`p-3 rounded-lg border transition-all text-left flex items-center justify-between gap-3 ${
                 isActive ? opt.activeColor : opt.inactiveColor
               }`}
             >
@@ -118,7 +118,7 @@ export const StockStatusQuickFilter: React.FC<StockStatusQuickFilterProps> = ({
 
               {/* Count Badge */}
               <span
-                className={`px-2.5 py-1 rounded-xl text-xs font-mono font-black shadow-2xs flex-shrink-0 ${
+                className={`px-2.5 py-1 rounded-md text-xs font-mono font-black shadow-2xs flex-shrink-0 ${
                   isActive ? opt.badgeColor : opt.inactiveBadge
                 }`}
               >
