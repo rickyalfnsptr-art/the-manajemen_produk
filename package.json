@@ -4,14 +4,14 @@
   "private": true,
   "description": "Sistem Manajemen & Monitoring Stok WHFG PT Menara Terus Makmur",
   "scripts": {
-    "dev:backend": "npm --prefix backend run start:dev",
-    "dev:frontend": "npm --prefix frontend run dev",
-    "build:backend": "npm --prefix backend run build",
-    "build:frontend": "npm --prefix frontend run build"
+    "dev:backend": "npm --prefix manajemen-stok/backend run start:dev",
+    "dev:frontend": "npm --prefix manajemen-stok/frontend run dev",
+    "build:backend": "npm --prefix manajemen-stok/backend run build",
+    "build:frontend": "npm --prefix manajemen-stok/frontend run build"
   },
   "devDependencies": {
-    "@types/node": "^26.6.2",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0"
+    "@types/node": "^22.13.9",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4"
   }
 }

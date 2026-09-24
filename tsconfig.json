@@ -14,16 +14,17 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./frontend/src/*"]
+      "@/*": ["./manajemen-stok/frontend/src/*"]
     }
   },
   "include": [
-    "frontend/**/*.ts",
-    "frontend/**/*.tsx"
+    "manajemen-stok/frontend/**/*.ts",
+    "manajemen-stok/frontend/**/*.tsx",
+    "manajemen-stok/backend/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "frontend/node_modules",
-    "backend/node_modules"
+    "manajemen-stok/frontend/node_modules",
+    "manajemen-stok/backend/node_modules"
   ]
 }
