@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PPIC
+  ADMIN
+  OPERATOR
+}
+
+enum StockStatus {
+  RED_MIN
+  GREEN_NORMAL
+  RED_MAX
+}
+
+enum LotStatus {
+  IN_STOCK
+  OUT_STOCK
+}
+
+enum TransactionType {
+  SCAN_IN
+  SCAN_OUT
+  MANUAL_IN
+  MANUAL_OUT
+}
+
+model User {
+  id           Int                @id @default(autoincrement())
+  npk          String             @unique
+  username     String             @unique
+  password     String
+  fullName     String
+  department   String
+  role         Role               @default(OPERATOR)
+  isActive     Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  transactions StockTransaction[]
+
+  @@index([npk])
+  @@index([username])
+}
+
+model MasterPart {
+  id             Int                 @id @default(autoincrement())
+  partNumber     String              @unique
+  partName       String
+  standardQty    Int                 @default(0)
+  defaultLine    String?             // Line asal internal atau vendor
+  location       String?             // PRODUCTION_1, PRODUCTION_2, SUBCOUNT, MPI
+  category       String?             // Kategori komponen (Tire Wrench, Hub Nut, Flange, Housing, Conrod, dll.)
+  isActive       Boolean             @default(true)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  customerStocks PartCustomerStock[] // Alokasi per PT Customer
+
+  @@index([partNumber])
+  @@index([category])
+  @@index([defaultLine])
+}
+
+model PartCustomerStock {
+  id                 Int                @id @default(autoincrement())
+  partId             Int
+  customerName       String             // Nama PT Customer (e.g. PT. TOYOTA MOTOR MANUFACTURING, PT. ASTRA DAIHATSU MOTOR)
+  customerPartNumber String?            // Nomor Part spesifik Customer PT ini
+  minStock           Int                @default(50)  // Diinput manual per PT oleh PPIC
+  maxStock           Int                @default(200) // Diinput manual per PT oleh PPIC
+  currentStock       Int                @default(0)   // Stok terkini untuk PT ini
+  stockStatus        StockStatus        @default(RED_MIN) // Dihitung dinamis per Part & per PT
+  lastInAt           DateTime?
+  lastOutAt          DateTime?
+  updatedAt          DateTime           @updatedAt
+  part               MasterPart         @relation(fields: [partId], references: [id], onDelete: Cascade)
+  lots               StockLot[]
+  transactions       StockTransaction[]
+
+  @@unique([partId, customerName])
+  @@index([customerName])
+  @@index([partId])
+  @@index([stockStatus])
+}
+
+model StockLot {
+  id                  Int               @id @default(autoincrement())
+  uniqueTag           String            @unique // PartNo + Date + Seq
+  partCustomerStockId Int
+  qty                 Int
+  lineAsal            String            // Line internal atau Vendor
+  status              LotStatus         @default(IN_STOCK)
+  inTimestamp         DateTime          @default(now())
+  outTimestamp        DateTime?
+  durationMinutes     Int?              // Dwell time dalam menit
+  partCustomerStock   PartCustomerStock @relation(fields: [partCustomerStockId], references: [id], onDelete: Cascade)
+  transactions        StockTransaction[]
+
+  @@index([uniqueTag])
+  @@index([partCustomerStockId])
+  @@index([status])
+}
+
+model StockTransaction {
+  id                  Int               @id @default(autoincrement())
+  transactionType     TransactionType
+  qrRawData           String?
+  uniqueTag           String?
+  partCustomerStockId Int
+  lotId               Int?
+  qty                 Int
+  previousStock       Int
+  currentStock        Int
+  lineAsal            String            // Line internal atau Vendor
+  userId              Int
+  notes               String?
+  createdAt           DateTime          @default(now())
+  partCustomerStock   PartCustomerStock @relation(fields: [partCustomerStockId], references: [id], onDelete: Cascade)
+  lot                 StockLot?         @relation(fields: [lotId], references: [id], onDelete: SetNull)
+  user                User              @relation(fields: [userId], references: [id])
+
+  @@index([partCustomerStockId])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([transactionType])
+}

@@ -1,0 +1,6 @@
+"Part Number","Nama Part","Kategori","Customer PT","Min Stock","Max Stock","Stok Aktual","Status","Rekomendasi"
+"45107-BZ010","COLLAR STEERING COLUMN","MACHINING","PT. TOYOTA MOTOR MANUFACTURING INDONESIA",100,500,70,"Kritis (<= Min)","Restock Segera dari Line/Vendor"
+"45107-BZ010","COLLAR STEERING COLUMN","MACHINING","PT. TOYOTA ASTRA MOTOR",50,200,180,"Normal (Min < Stok < Max)","Kondisi Stok Optimal"
+"45102-BZ020","BRACKET PEDAL BRAKE","STAMPING","PT. ASTRA DAIHATSU MOTOR",150,600,650,"Overstock (>= Max)","Prioritaskan Delivery OUT ke Customer"
+"45110-BZ030","SHAFT LOWER INTERMEDIATE","ASSEMBLY","PT. SUZUKI INDOMOBIL MOTOR",80,400,210,"Normal (Min < Stok < Max)","Kondisi Stok Optimal"
+"45115-BZ040","ROD TIE SUB ASSY","MACHINING","PT. HONDA PRECISION PARTS MANUFACTURING",100,300,50,"Kritis (<= Min)","Restock Segera dari Line/Vendor"
