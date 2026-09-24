@@ -13,7 +13,7 @@ Sistem ini dirancang khusus untuk memodernisasi dan mengotomatisasi proses penca
 3. **Statistik Pemantauan di Dashboard:** Menyajikan grafik dan visual statistik pergerakan stok langsung di dashboard monitoring untuk memantau tren operasional WHFG.
 4. **Stock Journey & Aging Traceability:** Melacak riwayat perjalanan stok (kapan barang masuk, berapa lama mengendap di WHFG, kapan keluar, dan siapa operator yang menangani).
 5. **Isolasi Transaksi Multi-Pintu:** Menjamin kelancaran operasional saat banyak operator melakukan pemindaian serentak dari berbagai line produksi internal maupun vendor/subcont eksternal.
-6. **Mekanisme Backup Modul Laporan:** Menyediakan folder backup mandiri untuk modul laporan lengkap (*ready-to-use*) agar siap diaktifkan kapan saja dibutuhkan tanpa membebani antarmuka utama.
+6. **Mekanisme Backup Modul Laporan Komprehensif:** Menyediakan folder backup mandiri untuk 4 modul laporan lengkap (*ready-to-use*) agar siap diaktifkan kapan saja dibutuhkan tanpa membebani antarmuka operasional utama.
 
 ---
 
@@ -30,7 +30,7 @@ Berdasarkan dokumen analisis tanya-jawab (*Q&A Analysis Document*), ruang lingku
 | **Pencetakan QR** | **External / Vendor** | Pembuatan dan pencetakan label QR Code dilakukan oleh sistem/program lain. Tugas sistem ini murni membaca (*scan*) dan memvalidasi data QR. |
 | **Penerimaan Melebihi Max** | **Tetap Bisa Masuk (Non-blocking)** | Stok akan **tetap bisa masuk** (Scan IN berhasil) walaupun jumlah stok sudah melebihi batas Max. Batas Max **hanya berfungsi sebagai peringatan warna merah di Dashboard**, bukan pembatas fisik penerimaan. |
 | **Statistik Dashboard** | **Monitoring Only** | Tampilan statistik dan grafik disajikan di Dashboard murni untuk kebutuhan pemantauan visual (*monitoring*). |
-| **Fitur Laporan Lengkap** | **Disimpan di Folder Backup** | Fitur laporan detail tidak langsung dipasang di menu aktif, melainkan disimpan sebagai modul backup mandiri di `backup-features/reports/` yang siap diaktifkan kapan saja. |
+| **Fitur Laporan Lengkap** | **Disimpan di Folder Backup** | Fitur laporan detail (4 jenis rekapitulasi data & export Excel) disimpan sebagai modul backup mandiri di `backup-features/reports/` yang siap diaktifkan kapan saja. |
 | **Selisih Fisik** | **Out of Scope** | Sistem mencatat transaksi aktual pemindaian. Penanganan selisih fisik gudang di luar tanggung jawab sistem ini. |
 | **Perangkat Scanner** | **Zebra Scanner Gun** | Menggunakan scanner Zebra yang terhubung ke jaringan (WiFi/LAN) via keyboard emulation / barcode listener. |
 | **Umpan Balik Scanner** | **Teks Sederhana** | Layar scanner hanya menampilkan teks: **"Berhasil"** (sukses) atau **"Gagal"** (ditolak/duplikat/error). Jika di-scan dua kali, sistem menampilkan **"Gagal karena sudah discan"**. |
@@ -122,8 +122,6 @@ Terdapat **523 User** dalam database MTM dengan rincian departemen/role:
 
 ### 4.1. End-to-End System Flowchart (Bagan Alur Keseluruhan Sistem)
 
-Diagram berikut menggambarkan alur operasional menyeluruh antara aktor Operator Pulling, PPIC/Admin, pemrosesan transaksi independen, validasi scan, evaluasi ambang batas, hingga dashboard monitoring dan statistik:
-
 ```mermaid
 flowchart TD
     subgraph Aktor ["Aktor & Antarmuka"]
@@ -180,9 +178,12 @@ flowchart TD
         DASHBOARD --> TRACKING_VIEW
     end
 
-    subgraph Backup_Module ["Folder Backup Modul Laporan (Ready-to-Use)"]
-        BACKUP_DIR["📁 backup-features/reports/ (Backend & Frontend Module)"]
-        BACKUP_DIR -.->|Jika Dibutuhkan Nanti| ACTIVATE["Aktifkan Fitur Laporan Lengkap"]
+    subgraph Backup_Module ["Folder Backup Modul Laporan (4 Output Laporan)"]
+        BACKUP_DIR["📁 backup-features/reports/"]
+        BACKUP_DIR --> R1["1. Laporan Mutasi & Pergerakan Stok Bulanan"]
+        BACKUP_DIR --> R2["2. Laporan Riwayat Transaksi & Audit Log"]
+        BACKUP_DIR --> R3["3. Laporan Evaluasi Stok Kritis & Overstock"]
+        BACKUP_DIR --> R4["4. Laporan Rata-rata Lama Simpan (Aging/Dwell Time)"]
     end
 
     classDef redStyle fill:#fee2e2,stroke:#ef4444,stroke-width:2px,color:#991b1b;
@@ -195,14 +196,12 @@ flowchart TD
     class COLOR_GREEN,FB_SUCCESS,COMMIT_IN,COMMIT_OUT greenStyle;
     class DASHBOARD,TRACKING_VIEW,MASTER_VIEW,STATS_VIEW blueStyle;
     class CHECK_DUP_IN,CHECK_STOCK_OUT,CHECK_TYPE,START_SCAN yellowStyle;
-    class BACKUP_DIR,ACTIVATE purpleStyle;
+    class BACKUP_DIR,R1,R2,R3,R4 purpleStyle;
 ```
 
 ---
 
 ### 4.2. Flowchart Logika Scan IN & Anti-Duplikasi
-
-Bagan alur detail validasi pemindaian barang masuk dan penanganan multi-operator/multi-pintu masuk (stok tetap dapat masuk meskipun kuantitas melebihi batas Max):
 
 ```mermaid
 flowchart TD
@@ -243,8 +242,6 @@ flowchart TD
 
 ### 4.3. Flowchart Logika Scan OUT & Perhitungan Aging (Dwell Time)
 
-Bagan alur pengeluaran barang jadi dan kalkulasi durasi waktu mengendap di WHFG:
-
 ```mermaid
 flowchart TD
     A([Mulai: Operator Pulling Scan Box Keluar]) --> B[Zebra Scan QR Code Kanban]
@@ -281,8 +278,6 @@ flowchart TD
 
 ### 4.4. Flowchart Logika Peringatan Status Warna Stok Per Part (Dashboard Monitoring)
 
-Bagan alur evaluasi peringatan visual spesifik per part yang tampil di dashboard monitoring:
-
 ```mermaid
 flowchart TD
     A([Input / Perubahan Kuantitas Stok Part]) --> B[Ambil Nilai: currentStock, minStock, maxStock]
@@ -312,8 +307,6 @@ flowchart TD
 ---
 
 ### 4.5. Flowchart Pengelompokan Part & Input Manual Min/Max (PPIC)
-
-Bagan alur navigasi pengelompokan 481 master part dan input manual nilai batas oleh PPIC:
 
 ```mermaid
 flowchart TD
@@ -404,7 +397,7 @@ Jika label QR Code rusak atau tidak terbaca oleh scanner Zebra, operator dapat m
 
 ---
 
-## 6. ATURAN AMBANG BATAS, STATISTIK DASHBOARD & BACKUP LAPORAN
+## 6. ATURAN AMBANG BATAS, STATISTIK DASHBOARD & RINCIAN MODUL LAPORAN (BACKUP)
 
 ### 6.1. Input Nilai Min & Max Manual oleh PPIC
 - Nilai ambang batas **Min Stock** dan **Max Stock** tidak bersifat statis global, melainkan **diinput secara manual per part number oleh user PPIC/Admin**.
@@ -434,13 +427,46 @@ $$\text{Status Stok}(part) = \begin{cases}
   3. *Komposisi Penerimaan Berdasarkan Asal Barang (Line Produksi Internal vs Vendor Eksternal)*
   4. *Top 5 Fast-Moving Finished Goods*
 
-### 6.4. Arsitektur Folder Backup Modul Laporan (`backup-features/reports/`)
-Sesuai arahan, fitur laporan detail (*laporan rekapitulasi transaksi, export spreadsheet, dll.*) tidak langsung diaktifkan pada menu utama operasional, melainkan disimpan dalam satu folder backup mandiri:
-- **Lokasi Folder:** `manajemen-stok/backup-features/reports/`
-- **Isi Folder Backup:**
-  - `backend/`: Controller, Service, dan DTO modul laporan (`reports.module.ts`, `reports.service.ts`, `reports.controller.ts`).
-  - `frontend/`: Halaman dan komponen UI laporan (`reports/page.tsx`, `ExportReportModal.tsx`, `DateRangePicker.tsx`).
-  - `README.md`: Panduan cepat cara mengaktifkan/memindahkan modul laporan ini ke aplikasi utama saat dibutuhkan di masa mendatang.
+### 6.4. Rincian 4 Hasil Laporan pada Folder Backup (`backup-features/reports/`)
+Fitur modul laporan komprehensif disimpan dalam folder mandiri `manajemen-stok/backup-features/reports/` yang siap digunakan/diaktifkan kapan saja. Modul ini menghasilkan 4 jenis laporan data penting untuk PPIC dan Manajemen:
+
+#### 1. Laporan Mutasi & Pergerakan Stok Bulanan (*Stock Movement Report*)
+- **Fungsi:** Menjawab rekapitulasi kuantitas barang masuk, keluar, dan sisa saldo per part dalam 1 bulan kalender.
+- **Hasil Data (Tabel & Export Excel):**
+  - `Part Number` & `Part Name`
+  - `Customer Name`
+  - `Stok Awal Bulan` (Saldo awal)
+  - `Total Qty Scan IN` (Penerimaan dari Line & Vendor)
+  - `Total Qty Scan OUT` (Pengeluaran untuk delivery)
+  - `Stok Akhir Bulan` (Saldo akhir)
+  - `Status Akhir` (🟢 Normal / 🔴 Kritis / 🔴 Overstock)
+
+#### 2. Laporan Riwayat Transaksi & Audit Log (*Transaction Audit Trail*)
+- **Fungsi:** Audit jejak digital setiap kali operator melakukan scan atau input manual (menjawab siapa, kapan, dan dari line mana).
+- **Hasil Data (Tabel & Export Excel):**
+  - `Waktu Scan` (Timestamp presisi DD/MM/YYYY HH:mm:ss)
+  - `Nomor Barcode / Kanban Tag`
+  - `Part Number` & `Customer Part Number`
+  - `Tipe Transaksi` (`SCAN_IN`, `SCAN_OUT`, `MANUAL_IN`, `MANUAL_OUT`)
+  - `Qty`
+  - `Line Asal / Vendor`
+  - `Operator NPK & Nama Lengkap`
+
+#### 3. Laporan Evaluasi Stok Kritis & Overstock (*Stock Threshold Evaluation Report*)
+- **Fungsi:** Menyajikan daftar part yang sering menyentuh ambang batas merah untuk membantu PPIC mengevaluasi jadwal produksi dan delivery.
+- **Hasil Data (Tabel & Export Excel):**
+  - `Part Number` & `Kategori Komponen`
+  - `Batas Min` & `Batas Max`
+  - `Stok Terkini`
+  - `Deviasi Stok` (Berapa kekurangan di bawah Min atau kelebihan di atas Max)
+  - `Keterangan Rekomendasi PPIC` (*Perlu Restock Produksi* / *Kurangi Pasokan*)
+
+#### 4. Laporan Rata-rata Lama Simpan (*Stock Aging & Dwell Time Report*)
+- **Fungsi:** Menganalisis kecepatan perputaran (*turnover rate*) dan durasi rata-rata barang mengendap di WHFG sebelum dikirim.
+- **Hasil Data (Tabel & Export Excel):**
+  - `Part Number` & `Customer`
+  - `Rata-rata Dwell Time` (contoh: *18 Jam*, *2 Hari 4 Jam*)
+  - `Klasifikasi Perputaran` (*Fast-Moving* vs *Slow-Moving*)
 
 ---
 
@@ -572,4 +598,4 @@ erDiagram
 
 ## 10. KESIMPULAN
 
-Dokumen analisis ini telah mengunci seluruh kebutuhan operasional, batasan teknis, aturan bisnis ambang batas stok per part, penanganan multi-operator, format QR Code plain text, statistik pemantauan dashboard, mekanisme pelacakan perjalanan stok WHFG, dan folder backup modul laporan PT MTM. Implementasi aplikasi pada folder `manajemen-stok/` akan mengikuti seluruh parameter dalam dokumen ini secara presisi.
+Dokumen analisis ini telah mengunci seluruh kebutuhan operasional, batasan teknis, aturan bisnis ambang batas stok per part, penanganan multi-operator, format QR Code plain text, statistik pemantauan dashboard, mekanisme pelacakan perjalanan stok WHFG, dan 4 jenis laporan dalam folder backup mandiri PT MTM. Implementasi aplikasi pada folder `manajemen-stok/` akan mengikuti seluruh parameter dalam dokumen ini secara presisi.
