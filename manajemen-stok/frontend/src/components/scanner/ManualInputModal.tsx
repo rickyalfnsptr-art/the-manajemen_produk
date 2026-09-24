@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, ClipboardEdit, AlertCircle, Save, Calendar, Clock, ArrowDownToLine, ArrowUpFromLine, CheckCircle2, RotateCcw } from 'lucide-react';
+import { X, ClipboardEdit, AlertCircle, Save, Clock, ArrowDownToLine, ArrowUpFromLine, CheckCircle2, RotateCcw } from 'lucide-react';
 import { submitManualStock } from '@/utils/api';
 import { ScanResult } from '@/types';
 
@@ -11,6 +11,28 @@ interface ManualInputModalProps {
   onSuccess: (result: ScanResult) => void;
   customerPts: string[];
 }
+
+const FACTORY_LINES = [
+  'Line Machining 1',
+  'Line Machining 2',
+  'Line Forging 1',
+  'Line Forging 2',
+  'Line Die Rolling',
+  'Line Subcount / Vendor Eksternal',
+  'Line MPI (Magnetic Particle Inspection)',
+  'Line Heat Treatment (HT)',
+  'Line Press & Stamping',
+  'Line Assembly Component',
+];
+
+const DOCK_DESTINATIONS = [
+  'Dock Loading A (PT. ADM / TMMIN)',
+  'Dock Loading B (PT. AHM / SIM)',
+  'Dock Loading C (PT. HPM / MMKI)',
+  'Dock Loading D (General Customer)',
+  'Area Transit Staging Finished Goods',
+  'Direct Delivery Container Gate',
+];
 
 export const ManualInputModal: React.FC<ManualInputModalProps> = ({
   isOpen,
@@ -31,25 +53,37 @@ export const ManualInputModal: React.FC<ManualInputModalProps> = ({
 
   const [partNumber, setPartNumber] = useState('');
   const [customerPt, setCustomerPt] = useState('');
+  const [customPt, setCustomPt] = useState('');
   const [qty, setQty] = useState<number>(1);
   const [type, setType] = useState<'IN' | 'OUT'>('IN');
-  const [originLineOrVendor, setOriginLineOrVendor] = useState('Line Production 1');
-  const [destinationDoorOrPt, setDestinationDoorOrPt] = useState('Dock Loading WHFG');
+  
+  // Line & Dock states (no auto-fill, user chooses from list or custom)
+  const [originLineOrVendor, setOriginLineOrVendor] = useState('');
+  const [customOriginLine, setCustomOriginLine] = useState('');
+  const [destinationDoorOrPt, setDestinationDoorOrPt] = useState('');
+  const [customDestinationDoor, setCustomDestinationDoor] = useState('');
+
   const [manualTimestamp, setManualTimestamp] = useState<string>(getNowLocalDatetime());
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Auto-refresh timestamp to current time when modal opens
+  // Auto-refresh timestamp to current time when modal opens & reset selections
   useEffect(() => {
     if (isOpen) {
       setManualTimestamp(getNowLocalDatetime());
       setError(null);
-      if (!customerPt && customerPts.length > 0) {
-        setCustomerPt(customerPts[0]);
-      }
+      setPartNumber('');
+      setCustomerPt('');
+      setCustomPt('');
+      setOriginLineOrVendor('');
+      setCustomOriginLine('');
+      setDestinationDoorOrPt('');
+      setCustomDestinationDoor('');
+      setNotes('');
+      setQty(1);
     }
-  }, [isOpen, customerPts]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -63,21 +97,31 @@ export const ManualInputModal: React.FC<ManualInputModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!partNumber.trim() || !customerPt.trim() || qty <= 0) {
+
+    const selectedPt = customerPt === 'OTHER' ? customPt.trim() : customerPt.trim();
+    if (!partNumber.trim() || !selectedPt || qty <= 0) {
       setError('Part Number, Customer PT, dan Qty (>0) wajib diisi.');
       return;
     }
+
+    const finalOriginLine = originLineOrVendor === 'OTHER' 
+      ? customOriginLine.trim() 
+      : originLineOrVendor.trim();
+
+    const finalDestinationDoor = destinationDoorOrPt === 'OTHER' 
+      ? customDestinationDoor.trim() 
+      : destinationDoorOrPt.trim();
 
     setLoading(true);
     setError(null);
 
     const res = await submitManualStock({
       partNumber: partNumber.trim().toUpperCase(),
-      customerPt: customerPt.trim(),
+      customerPt: selectedPt,
       qty: Number(qty),
       type,
-      originLineOrVendor: type === 'IN' ? (originLineOrVendor.trim() || 'Line Internal') : undefined,
-      destinationDoorOrPt: type === 'OUT' ? (destinationDoorOrPt.trim() || 'Dock Loading') : undefined,
+      originLineOrVendor: type === 'IN' ? (finalOriginLine || undefined) : undefined,
+      destinationDoorOrPt: type === 'OUT' ? (finalDestinationDoor || undefined) : undefined,
       manualTimestamp: new Date(manualTimestamp).toISOString(),
       notes: notes.trim() || 'Input Manual Operator',
     });
@@ -165,7 +209,7 @@ export const ManualInputModal: React.FC<ManualInputModalProps> = ({
               </label>
               <input
                 type="text"
-                placeholder="Contoh: 45107-BZ010"
+                placeholder="Ketik Part Number..."
                 value={partNumber}
                 onChange={(e) => setPartNumber(e.target.value.toUpperCase())}
                 required
@@ -177,21 +221,38 @@ export const ManualInputModal: React.FC<ManualInputModalProps> = ({
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                 3. Customer PT *
               </label>
-              <input
-                list="customerPtList"
-                placeholder="Pilih Customer PT..."
+              <select
                 value={customerPt}
                 onChange={(e) => setCustomerPt(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-amber-500 outline-none transition-all truncate"
-              />
-              <datalist id="customerPtList">
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-amber-500 outline-none transition-all cursor-pointer truncate"
+              >
+                <option value="">-- Pilih Customer PT --</option>
                 {customerPts.map((pt, i) => (
-                  <option key={i} value={pt} />
+                  <option key={i} value={pt}>
+                    {pt}
+                  </option>
                 ))}
-              </datalist>
+                <option value="OTHER">+ Ketik PT Lainnya...</option>
+              </select>
             </div>
           </div>
+
+          {customerPt === 'OTHER' && (
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                Nama PT Lainnya *
+              </label>
+              <input
+                type="text"
+                placeholder="Contoh: PT. HYUNDAI MOTOR MANUFACTURING INDONESIA"
+                value={customPt}
+                onChange={(e) => setCustomPt(e.target.value)}
+                required
+                className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-amber-500 outline-none"
+              />
+            </div>
+          )}
 
           {/* 3. Qty dengan Quick Presets */}
           <div>
@@ -223,27 +284,63 @@ export const ManualInputModal: React.FC<ManualInputModalProps> = ({
             />
           </div>
 
-          {/* 4. Asal / Tujuan */}
+          {/* 4. Asal Line / Dock Tujuan (Pilihan Dropdown) */}
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
               {type === 'IN' ? '5. Line Asal / Vendor' : '5. Pintu / Dock Loading Tujuan'}
             </label>
             {type === 'IN' ? (
-              <input
-                type="text"
-                placeholder="Contoh: Line Machining 1, Line Forging, Subcount"
-                value={originLineOrVendor}
-                onChange={(e) => setOriginLineOrVendor(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-amber-500 outline-none"
-              />
+              <>
+                <select
+                  value={originLineOrVendor}
+                  onChange={(e) => setOriginLineOrVendor(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer"
+                >
+                  <option value="">-- Pilih Line Asal / Vendor --</option>
+                  {FACTORY_LINES.map((line, idx) => (
+                    <option key={idx} value={line}>
+                      {line}
+                    </option>
+                  ))}
+                  <option value="OTHER">+ Line / Vendor Lainnya...</option>
+                </select>
+                {originLineOrVendor === 'OTHER' && (
+                  <input
+                    type="text"
+                    placeholder="Ketik Line / Vendor Asal..."
+                    value={customOriginLine}
+                    onChange={(e) => setCustomOriginLine(e.target.value)}
+                    required
+                    className="w-full mt-2 px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-amber-500 outline-none"
+                  />
+                )}
+              </>
             ) : (
-              <input
-                type="text"
-                placeholder="Contoh: Dock Loading A, Delivery Gate 2"
-                value={destinationDoorOrPt}
-                onChange={(e) => setDestinationDoorOrPt(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-amber-500 outline-none"
-              />
+              <>
+                <select
+                  value={destinationDoorOrPt}
+                  onChange={(e) => setDestinationDoorOrPt(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer"
+                >
+                  <option value="">-- Pilih Pintu / Dock Tujuan --</option>
+                  {DOCK_DESTINATIONS.map((dock, idx) => (
+                    <option key={idx} value={dock}>
+                      {dock}
+                    </option>
+                  ))}
+                  <option value="OTHER">+ Pintu / Dock Lainnya...</option>
+                </select>
+                {destinationDoorOrPt === 'OTHER' && (
+                  <input
+                    type="text"
+                    placeholder="Ketik Pintu / Dock Loading Tujuan..."
+                    value={customDestinationDoor}
+                    onChange={(e) => setCustomDestinationDoor(e.target.value)}
+                    required
+                    className="w-full mt-2 px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs focus:ring-2 focus:ring-amber-500 outline-none"
+                  />
+                )}
+              </>
             )}
           </div>
 
@@ -257,7 +354,7 @@ export const ManualInputModal: React.FC<ManualInputModalProps> = ({
               <button
                 type="button"
                 onClick={handleSetCurrentTime}
-                className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded-lg border border-blue-200 transition-colors"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-lg border border-blue-200 transition-colors shadow-2xs"
                 title="Reset kembali ke waktu saat ini"
               >
                 <RotateCcw className="w-3 h-3" />
@@ -274,7 +371,7 @@ export const ManualInputModal: React.FC<ManualInputModalProps> = ({
             />
             <p className="text-[10px] text-slate-500 mt-1.5 flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-              Otomatis diset waktu saat ini. Anda tetap bisa mengganti tanggal / jam secara manual.
+              Otomatis terisi waktu saat ini (WIB). Anda tetap bebas memilih tanggal & jam lain jika diperlukan.
             </p>
           </div>
 
