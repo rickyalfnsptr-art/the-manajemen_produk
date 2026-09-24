@@ -6,7 +6,6 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { CustomerPtFilterBar } from '@/components/monitoring/CustomerPtFilterBar';
 import { StockStatusQuickFilter } from '@/components/monitoring/StockStatusQuickFilter';
 import { CriticalStockAlertTable } from '@/components/monitoring/CriticalStockAlertTable';
-import { DashboardStatisticsCharts } from '@/components/monitoring/DashboardStatisticsCharts';
 import { StockMonitoringTable } from '@/components/monitoring/StockMonitoringTable';
 import { PtThresholdModal } from '@/components/master/PtThresholdModal';
 import { getStockMonitoring, getStockSummaryStats, getCustomerPts, getCurrentUser } from '@/utils/api';
@@ -120,10 +119,7 @@ export default function DashboardPage() {
         />
       )}
 
-      {/* 4. Statistics & Trends */}
-      <DashboardStatisticsCharts stats={stats} />
-
-      {/* 5. Detailed Stock Monitoring Table */}
+      {/* 4. Detailed Stock Monitoring Table */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
