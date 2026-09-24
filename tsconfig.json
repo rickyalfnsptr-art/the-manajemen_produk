@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./manajemen-stok/frontend/src/*"]
+    }
+  },
+  "include": [
+    "manajemen-stok/frontend/**/*.ts",
+    "manajemen-stok/frontend/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "manajemen-stok/frontend/node_modules",
+    "manajemen-stok/backend/node_modules"
+  ]
+}
