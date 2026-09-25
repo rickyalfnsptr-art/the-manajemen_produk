@@ -51,35 +51,19 @@ api.interceptors.response.use(
 export default api;
 
 // --- Auth Helpers ---
-export const getCurrentUser = (): User => {
+export const getCurrentUser = (): User | null => {
   if (typeof window === 'undefined') {
-    return {
-      id: '1',
-      npk: 'PPIC001',
-      username: 'ppic_user',
-      fullName: 'Budi Santoso (PPIC)',
-      role: 'PPIC',
-      department: 'PPIC WHFG',
-    };
+    return null;
   }
   const userStr = localStorage.getItem('mtm_whfg_user') || localStorage.getItem('mtm_user');
   if (userStr) {
     try {
       return JSON.parse(userStr);
     } catch {
-      // fallback
+      return null;
     }
   }
-  const defaultUser: User = {
-    id: '1',
-    npk: 'PPIC001',
-    username: 'ppic_user',
-    fullName: 'Budi Santoso (PPIC)',
-    role: 'PPIC',
-    department: 'PPIC WHFG',
-  };
-  localStorage.setItem('mtm_whfg_user', JSON.stringify(defaultUser));
-  return defaultUser;
+  return null;
 };
 
 export const loginUser = async (username: string, password: string): Promise<{ success: boolean; data?: any; error?: string }> => {
@@ -108,6 +92,8 @@ export const logoutUser = () => {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('mtm_token');
     localStorage.removeItem('mtm_whfg_user');
+    localStorage.removeItem('mtm_user');
+    sessionStorage.clear();
     window.location.href = '/login';
   }
 };

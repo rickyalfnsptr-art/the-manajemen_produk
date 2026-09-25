@@ -7,13 +7,12 @@ import { StockJourneyCard } from '@/components/tracking/StockJourneyCard';
 import {
   getPartTracking,
   getMasterParts,
+  getCustomerPts,
   getCurrentUser,
 } from '@/utils/api';
 import { MasterPart, StockLot, StockTransaction, User } from '@/types';
 import {
-  Search,
   AlertCircle,
-  Clock,
   History,
 } from 'lucide-react';
 
@@ -24,14 +23,15 @@ function TrackingContent() {
 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  // Search & Part Tracker State
-  const [searchTerm, setSearchTerm] = useState(initialPartNumber);
+  const [customerPts, setCustomerPts] = useState<string[]>([]);
+  const [allParts, setAllParts] = useState<MasterPart[]>([]);
+  const [selectedPt, setSelectedPt] = useState<string>('ALL');
+  const [selectedPartNo, setSelectedPartNo] = useState<string>(initialPartNumber);
   const [selectedPart, setSelectedPart] = useState<MasterPart | null>(null);
   const [partLots, setPartLots] = useState<StockLot[]>([]);
   const [partTransactions, setPartTransactions] = useState<StockTransaction[]>([]);
   const [trackingLoading, setTrackingLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
-  const [popularParts, setPopularParts] = useState<MasterPart[]>([]);
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -45,8 +45,19 @@ function TrackingContent() {
 
   const loadInitialData = async () => {
     try {
-      const partsRes = await getMasterParts();
-      setPopularParts(partsRes.slice(0, 8));
+      const [partsRes, ptsRes] = await Promise.all([
+        getMasterParts(),
+        getCustomerPts(),
+      ]);
+      setAllParts(partsRes || []);
+      setCustomerPts(ptsRes || []);
+
+      // If initial part number is present in URL, select it, otherwise select the first part
+      const targetPartNo = initialPartNumber || (partsRes.length > 0 ? partsRes[0].partNumber : '');
+      if (targetPartNo) {
+        setSelectedPartNo(targetPartNo);
+        executeSearch(targetPartNo);
+      }
     } catch (err) {
       console.error('Failed to load initial tracking data', err);
     }
@@ -71,76 +82,86 @@ function TrackingContent() {
       setSelectedPart(null);
       setPartLots([]);
       setPartTransactions([]);
-      setSearchError(res.error || `Part number "${clean}" tidak ditemukan di database WHFG.`);
+      setSearchError(res.error || `Part "${clean}" tidak ditemukan di database WHFG.`);
     }
   };
 
-  useEffect(() => {
-    if (initialPartNumber) {
-      setSearchTerm(initialPartNumber);
-      executeSearch(initialPartNumber);
+  // Filter parts list by selected PT
+  const availableParts = React.useMemo(() => {
+    if (!selectedPt || selectedPt === 'ALL') {
+      return allParts;
     }
-  }, [initialPartNumber]);
+    return allParts.filter((p) => {
+      const stocks = p.customerStocks || [];
+      return stocks.some((s) => (s.customerPt || '').toLowerCase() === selectedPt.toLowerCase());
+    });
+  }, [allParts, selectedPt]);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    executeSearch(searchTerm);
+  const handlePtChange = (pt: string) => {
+    setSelectedPt(pt);
+    let matchedParts = allParts;
+    if (pt !== 'ALL') {
+      matchedParts = allParts.filter((p) => {
+        const stocks = p.customerStocks || [];
+        return stocks.some((s) => (s.customerPt || '').toLowerCase() === pt.toLowerCase());
+      });
+    }
+    if (matchedParts.length > 0) {
+      const nextPart = matchedParts[0].partNumber;
+      setSelectedPartNo(nextPart);
+      executeSearch(nextPart);
+    }
+  };
+
+  const handlePartSelect = (partNo: string) => {
+    setSelectedPartNo(partNo);
+    executeSearch(partNo);
   };
 
   return (
-    <AppLayout
-      title="Lacak Part"
-      subtitle="Tracking stok fisik & log mutasi transaksi"
-    >
+    <AppLayout title="Lacak Part">
       <div className="space-y-4">
-        {/* Search Bar & Quick Part Suggestions */}
-        <div className="bg-white p-4 sm:p-5 rounded-lg border border-slate-200 shadow-sm space-y-3.5">
-          <form onSubmit={handleFormSubmit} className="flex flex-col sm:flex-row gap-2.5">
-            <div className="flex-1 relative">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
-              <input
-                type="text"
-                placeholder="Ketik Part Number (contoh: BIPACK-BANTOL0000, 45107-BZ010)..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-950 font-mono text-sm font-bold placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none uppercase transition-all"
-              />
+        {/* Dropdown Selectors: Customer PT & Part Name */}
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* 1. Dropdown Customer PT */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                1. Pilih Customer PT
+              </label>
+              <select
+                value={selectedPt}
+                onChange={(e) => handlePtChange(e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm font-bold text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer shadow-2xs"
+              >
+                <option value="ALL">🏢 Semua Customer PT ({customerPts.length} PT)</option>
+                {customerPts.map((pt, idx) => (
+                  <option key={idx} value={pt}>
+                    {pt}
+                  </option>
+                ))}
+              </select>
             </div>
-            <button
-              type="submit"
-              disabled={trackingLoading || !searchTerm.trim()}
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white font-bold text-xs rounded-lg shadow-xs flex items-center justify-center gap-1.5 transition-all flex-shrink-0"
-            >
-              <Search className="w-3.5 h-3.5" />
-              {trackingLoading ? 'Mencari...' : 'Lacak Part'}
-            </button>
-          </form>
 
-          {/* Quick Part Suggestions */}
-          {popularParts.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider mr-1">
-                Rekomendasi Part:
-              </span>
-              {popularParts.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => {
-                    setSearchTerm(p.partNumber);
-                    executeSearch(p.partNumber);
-                  }}
-                  className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all border ${
-                    selectedPart?.partNumber === p.partNumber
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                      : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-900'
-                  }`}
-                >
-                  {p.partNumber}
-                </button>
-              ))}
+            {/* 2. Scroll-down Dropdown Pilih Part (Nama Part & No Part) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                2. Pilih Part ({availableParts.length} Tersedia)
+              </label>
+              <select
+                value={selectedPartNo}
+                onChange={(e) => handlePartSelect(e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm font-bold text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer shadow-2xs"
+              >
+                <option value="" disabled>-- Pilih Part / Komponen --</option>
+                {availableParts.map((p) => (
+                  <option key={p.id} value={p.partNumber}>
+                    {p.partName} - [{p.partNumber}]
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Error Message */}
@@ -158,6 +179,7 @@ function TrackingContent() {
             lots={partLots}
             transactions={partTransactions}
             loading={trackingLoading}
+            selectedPt={selectedPt}
           />
         )}
 
@@ -166,11 +188,8 @@ function TrackingContent() {
           <div className="bg-white rounded-lg border border-slate-200 p-12 text-center text-slate-400 space-y-3">
             <History className="w-12 h-12 mx-auto text-blue-600 opacity-40" />
             <h3 className="text-base font-bold text-slate-900">
-              Masukkan Part Number untuk Memulai Pelacakan
+              Pilih Part dari Menu Dropdown di Atas
             </h3>
-            <p className="text-xs text-slate-600 max-w-md mx-auto font-medium">
-              Sistem akan menampilkan ringkasan stok fisik terkini, ambang batas Min/Max per PT Customer, serta seluruh riwayat mutasi transaksi Scan IN dan Scan OUT secara lengkap.
-            </p>
           </div>
         )}
       </div>

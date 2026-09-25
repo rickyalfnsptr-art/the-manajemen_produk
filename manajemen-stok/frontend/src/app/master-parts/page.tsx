@@ -162,31 +162,25 @@ export default function MasterPartsPage() {
   return (
     <AppLayout
       title="Ambang Batas"
-      subtitle="Kontrol batas stok per Part &amp; Customer PT"
     >
-      {/* 1. Main Clarity Banner */}
-      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-        <div className="flex items-start sm:items-center gap-3.5">
-          <div className="p-2.5 bg-blue-50 text-blue-700 rounded-2xl border border-blue-100 flex-shrink-0">
-            <ShieldCheck className="w-6 h-6" />
+      {/* 1. Header Action Bar (Compact) */}
+      <div className="bg-white px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 bg-blue-50 text-blue-700 rounded-lg border border-blue-100 flex-shrink-0">
+            <ShieldCheck className="w-5 h-5" />
           </div>
-          <div>
-            <h2 className="text-sm sm:text-base font-bold text-slate-900">
-              Ambang Batas Stok Part &amp; PT
-            </h2>
-            <p className="text-xs text-slate-500 mt-0.5 max-w-2xl leading-relaxed">
-              Batas stok <strong>Min</strong> dan <strong>Max</strong> per alokasi Part &amp; Customer PT.
-            </p>
-          </div>
+          <h2 className="text-sm sm:text-base font-bold text-slate-900">
+            Ambang Batas Stok Part &amp; PT
+          </h2>
         </div>
 
         {/* Action Controls */}
-        <div className="flex flex-wrap items-center gap-2 self-start lg:self-center flex-shrink-0">
+        <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
           {canEdit && (
             <button
               type="button"
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs hover:shadow transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-2xs transition-all"
             >
               <PlusCircle className="w-4 h-4" />
               + Alokasi Part
@@ -194,13 +188,13 @@ export default function MasterPartsPage() {
           )}
 
           {/* Mode Switcher */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
             <button
               type="button"
               onClick={() => setViewMode('WHITEBOARD')}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all ${
                 viewMode === 'WHITEBOARD'
-                  ? 'bg-white text-blue-700 shadow-xs'
+                  ? 'bg-white text-blue-700 shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -210,9 +204,9 @@ export default function MasterPartsPage() {
             <button
               type="button"
               onClick={() => setViewMode('TABLE')}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all ${
                 viewMode === 'TABLE'
-                  ? 'bg-white text-blue-700 shadow-xs'
+                  ? 'bg-white text-blue-700 shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -222,9 +216,9 @@ export default function MasterPartsPage() {
             <button
               type="button"
               onClick={() => setViewMode('CARDS')}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold transition-all ${
                 viewMode === 'CARDS'
-                  ? 'bg-white text-blue-700 shadow-xs'
+                  ? 'bg-white text-blue-700 shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -235,33 +229,28 @@ export default function MasterPartsPage() {
         </div>
       </div>
 
-      {/* 2. Interactive Status Quick Filters (🔴 Kritis / 🟡 Overstock / 🟢 Normal) */}
-      <StockStatusQuickFilter
-        statusFilter={statusFilter}
-        onStatusChange={setStatusFilter}
-        counts={{
-          total: allAllocations.length,
-          normal: normalCount,
-          underMin: underMinCount,
-          overMax: overMaxCount,
-        }}
-      />
-
-      {/* 3. PT Customer Selector */}
-      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-blue-600" />
-            <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-              Pilih Customer PT:
-            </span>
+      {/* 2. Unified Compact Filter Bar (Status & PT) */}
+      <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-xs space-y-3">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
+          {/* Status Quick Pills */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <StockStatusQuickFilter
+              statusFilter={statusFilter}
+              onStatusChange={setStatusFilter}
+              counts={{
+                total: allAllocations.length,
+                normal: normalCount,
+                underMin: underMinCount,
+                overMax: overMaxCount,
+              }}
+            />
           </div>
 
           {/* PT Dropdown */}
           <select
             value={selectedPt}
             onChange={(e) => setSelectedPt(e.target.value)}
-            className="text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-800 outline-none focus:ring-2 focus:ring-blue-500 max-w-sm truncate cursor-pointer shadow-xs"
+            className="text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-800 outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white max-w-sm truncate cursor-pointer shadow-2xs"
           >
             <option value="ALL">🏢 Semua PT ({customerPts.length} Customer)</option>
             {customerPts.map((pt, idx) => (
@@ -272,8 +261,8 @@ export default function MasterPartsPage() {
           </select>
         </div>
 
-        {/* PT Quick Chips */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+        {/* Top PT Quick Chips */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-thin pt-2 border-t border-slate-100">
           {[
             { label: 'Semua PT', val: 'ALL' },
             { label: 'Toyota (TMMIN)', val: 'PT. TOYOTA MOTOR MANUFACTURING INDONESIA' },
@@ -289,10 +278,10 @@ export default function MasterPartsPage() {
                 key={idx}
                 type="button"
                 onClick={() => setSelectedPt(item.val)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-all border ${
                   isSelected
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                 }`}
               >
                 {item.label}

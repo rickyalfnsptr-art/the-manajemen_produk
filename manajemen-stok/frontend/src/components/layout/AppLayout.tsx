@@ -55,7 +55,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         <main
           className={`flex-1 w-full mx-auto ${
             fullHeight
-              ? 'h-[calc(100vh-56px)] overflow-hidden p-3 sm:p-4 max-w-7xl flex flex-col justify-between'
+              ? 'h-[calc(100vh-80px)] overflow-hidden p-3 sm:p-4 max-w-7xl flex flex-col justify-between'
               : 'overflow-y-auto overflow-x-hidden p-3.5 sm:p-5 lg:p-6 max-w-7xl space-y-6'
           }`}
         >

@@ -58,25 +58,17 @@ export default function ScanPage() {
   return (
     <AppLayout
       title="Terminal Scan"
-      subtitle="Scan IN & OUT Kanban barang jadi"
     >
       {/* Header Action Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900 text-white p-4 sm:p-5 rounded-lg shadow-sm border border-slate-800">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white text-slate-900 p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200">
         <div>
-          <div className="flex items-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-wider mb-1">
-            <QrCode className="w-4 h-4" />
-            Scanner Engine
-          </div>
-          <h2 className="text-base sm:text-lg font-black">Scan Kanban Finished Goods</h2>
-          <p className="text-xs text-slate-300 mt-0.5 max-w-xl">
-            Arahkan barcode scanner ke Kanban untuk pencatatan transaksi otomatis.
-          </p>
+          <h2 className="text-base sm:text-lg font-black text-slate-900">SCAN/INPUT KANBAN FINISH GOOD</h2>
         </div>
 
         <button
           type="button"
           onClick={() => setIsManualModalOpen(true)}
-          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-lg shadow-xs flex items-center gap-1.5 transition-all flex-shrink-0"
+          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 transition-all flex-shrink-0"
         >
           <ClipboardEdit className="w-4 h-4" />
           Input Manual

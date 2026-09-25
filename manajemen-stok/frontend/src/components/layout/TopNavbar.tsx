@@ -34,7 +34,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   }, []);
 
   return (
-    <header className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 py-3.5 flex justify-between items-center z-30 shadow-xs flex-shrink-0">
+    <header className="h-20 sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 flex justify-between items-center z-30 shadow-xs flex-shrink-0">
       {/* Left: Mobile Toggle + Portal Title & Subtitle */}
       <div className="flex items-center gap-3 min-w-0">
         {onToggleMobileSidebar && (
@@ -47,28 +47,33 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
             <Menu className="w-5 h-5" />
           </button>
         )}
-        <div className="min-w-0">
-          <h1 className="text-sm sm:text-base font-black text-slate-900 tracking-tight leading-none uppercase truncate">
+        <div className="min-w-0 flex items-center gap-3">
+          <h1 className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-none uppercase truncate">
             {title}
           </h1>
-          <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium tracking-wide mt-1 truncate">
-            {subtitle || 'PT Menara Terus Makmur • WHFG'}
-          </p>
+          {subtitle && (
+            <span className="hidden md:inline-block text-slate-300 font-light text-sm">|</span>
+          )}
+          {subtitle && (
+            <p className="hidden md:block text-xs text-slate-500 font-medium tracking-wide truncate">
+              {subtitle}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Right: Live WHFG Server Badge + Live Digital Clock (No duplicate profile/logout) */}
+      {/* Right: Live WHFG Server Badge + Live Digital Clock */}
       <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
         {/* Live WHFG Server Status */}
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold shadow-2xs">
-          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-          <Activity className="w-3.5 h-3.5" />
+        <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-xs">
+          <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+          <Activity className="w-4 h-4" />
           <span className="hidden sm:inline">WHFG Online</span>
         </div>
 
         {/* Live Digital Clock */}
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 text-white text-xs font-mono font-bold shadow-2xs">
-          <Clock className="w-3.5 h-3.5 text-slate-300" />
+        <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-mono font-bold shadow-xs">
+          <Clock className="w-4 h-4 text-slate-300" />
           <span suppressHydrationWarning>{timeStr || '--:--:-- WIB'}</span>
         </div>
       </div>

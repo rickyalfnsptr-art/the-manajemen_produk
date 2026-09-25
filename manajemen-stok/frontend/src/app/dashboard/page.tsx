@@ -76,7 +76,6 @@ export default function DashboardPage() {
   return (
     <AppLayout
       title="Monitoring Stok"
-      subtitle="Pemantauan stok fisik & ambang batas PT"
     >
       <div className="space-y-4">
         {/* 1. KPI Metric Cards */}
@@ -145,7 +144,7 @@ export default function DashboardPage() {
           >
             <div className="flex items-center justify-between mb-1">
               <span className={`text-xs font-bold uppercase tracking-wider ${statusFilter === 'RED_MIN' ? 'text-white' : 'text-red-800'}`}>
-                Kritis (≤ Min)
+                Kritis
               </span>
             </div>
             <div className="flex items-baseline gap-1.5">
@@ -173,7 +172,7 @@ export default function DashboardPage() {
           >
             <div className="flex items-center justify-between mb-1">
               <span className={`text-xs font-bold uppercase tracking-wider ${statusFilter === 'RED_MAX' ? 'text-white' : 'text-amber-800'}`}>
-                Overstock (≥ Max)
+                Overstock
               </span>
             </div>
             <div className="flex items-baseline gap-1.5">

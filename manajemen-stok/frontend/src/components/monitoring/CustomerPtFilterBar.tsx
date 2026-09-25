@@ -45,9 +45,6 @@ export const CustomerPtFilterBar: React.FC<CustomerPtFilterBarProps> = ({
           </div>
           <div>
             <h2 className="text-sm font-bold text-slate-800">Filter Alokasi PT Customer</h2>
-            <p className="text-xs text-slate-500">
-              Pantau status stok &amp; ambang batas khusus masing-masing PT Customer
-            </p>
           </div>
         </div>
 

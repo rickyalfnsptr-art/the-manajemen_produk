@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { User } from '@/types';
 
+import { logoutUser } from '@/utils/api';
+
 interface SidebarProps {
   onCloseMobile?: () => void;
   isMobile?: boolean;
@@ -42,12 +44,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
   }, []);
 
   const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('mtm_token');
-      localStorage.removeItem('mtm_whfg_user');
-      localStorage.removeItem('mtm_user');
-      router.push('/login');
-    }
+    logoutUser();
   };
 
   const getInitials = (name?: string) => {
@@ -103,15 +100,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
 
   return (
     <aside className="w-full h-full bg-white text-slate-800 flex flex-col select-none overflow-hidden">
-      {/* Top Section: Official MTM Logo Banner */}
-      <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-        <div className="flex flex-col items-start">
+      {/* Top Section: Official MTM Logo Banner (Aligned with TopNavbar) */}
+      <div className="h-20 px-4 border-b border-slate-200 flex items-center justify-between bg-white flex-shrink-0">
+        <div className="flex flex-col items-start justify-center">
           <img
             src="/images/logo-mtm.jpg"
             alt="PT Menara Terus Makmur"
             className="h-9 object-contain"
           />
-          <span className="text-[9px] font-extrabold text-blue-700 tracking-wider mt-1 uppercase">
+          <span className="text-[10px] font-extrabold text-blue-700 tracking-wider mt-1 uppercase">
             WHFG System
           </span>
         </div>

@@ -225,7 +225,7 @@ export const ManualInputModal: React.FC<ManualInputModalProps> = ({
                 onClick={() => setType('IN')}
                 className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 border transition-all ${
                   type === 'IN'
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
                     : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                 }`}
               >
@@ -237,7 +237,7 @@ export const ManualInputModal: React.FC<ManualInputModalProps> = ({
                 onClick={() => setType('OUT')}
                 className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-2 border transition-all ${
                   type === 'OUT'
-                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                    ? 'bg-red-600 text-white border-red-600 shadow-sm'
                     : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                 }`}
               >

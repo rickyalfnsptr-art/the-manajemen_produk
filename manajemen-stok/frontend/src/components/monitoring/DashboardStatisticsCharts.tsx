@@ -3,8 +3,9 @@
 import React from 'react';
 import {
   ResponsiveContainer,
-  BarChart,
+  ComposedChart,
   Bar,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -56,7 +57,6 @@ export const DashboardStatisticsCharts: React.FC<DashboardStatisticsChartsProps>
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-800">Statistik Mutasi IN vs OUT (7 Hari Terakhir)</h3>
-              <p className="text-xs text-slate-500">Volume pergerakan barang finish good di gudang WHFG</p>
             </div>
           </div>
           <span className="text-xs font-semibold px-2 py-1 bg-slate-100 text-slate-600 rounded-full">
@@ -67,7 +67,7 @@ export const DashboardStatisticsCharts: React.FC<DashboardStatisticsChartsProps>
         <div className="h-64 w-full">
           {stats.dailyTrends && stats.dailyTrends.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.dailyTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <ComposedChart data={stats.dailyTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#64748b' }} />
                 <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
@@ -85,9 +85,11 @@ export const DashboardStatisticsCharts: React.FC<DashboardStatisticsChartsProps>
                   wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }}
                   iconType="circle"
                 />
-                <Bar dataKey="inQty" name="Barang Masuk (IN)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="outQty" name="Barang Keluar (OUT)" fill="#10b981" radius={[4, 4, 0, 0]} />
-              </BarChart>
+                <Bar dataKey="inQty" name="Barang Masuk (IN)" fill="#3b82f6" radius={[4, 4, 0, 0]} opacity={0.85} />
+                <Bar dataKey="outQty" name="Barang Keluar (OUT)" fill="#10b981" radius={[4, 4, 0, 0]} opacity={0.85} />
+                <Line type="monotone" dataKey="inQty" name="Tren IN" stroke="#1d4ed8" strokeWidth={2.5} dot={{ r: 4, fill: '#1d4ed8' }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="outQty" name="Tren OUT" stroke="#047857" strokeWidth={2.5} dot={{ r: 4, fill: '#047857' }} activeDot={{ r: 6 }} />
+              </ComposedChart>
             </ResponsiveContainer>
           ) : (
             <div className="h-full flex items-center justify-center text-xs text-slate-400">
@@ -106,7 +108,6 @@ export const DashboardStatisticsCharts: React.FC<DashboardStatisticsChartsProps>
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-800">Distribusi Status Stok</h3>
-              <p className="text-xs text-slate-500">Kesehatan stok per kombinasi PT</p>
             </div>
           </div>
 
@@ -161,14 +162,14 @@ export const DashboardStatisticsCharts: React.FC<DashboardStatisticsChartsProps>
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
-              <span className="text-slate-600">Kritis (&le; Min)</span>
+              <span className="text-slate-600">Kritis</span>
             </div>
             <span className="font-bold text-red-600">{stats.underMinCount}</span>
           </div>
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-              <span className="text-slate-600">Overstock (&ge; Max)</span>
+              <span className="text-slate-600">Overstock</span>
             </div>
             <span className="font-bold text-amber-600">{stats.overMaxCount}</span>
           </div>

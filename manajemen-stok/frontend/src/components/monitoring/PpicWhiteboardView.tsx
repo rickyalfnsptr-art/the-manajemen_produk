@@ -68,27 +68,33 @@ export const PpicWhiteboardView: React.FC<PpicWhiteboardViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Visual Whiteboard Header Bar */}
-      <div className="p-4 bg-slate-900 text-white rounded-2xl shadow-sm flex flex-wrap items-center justify-between gap-3 border border-slate-800">
+      <div className="p-3.5 sm:p-4 bg-white text-slate-900 rounded-xl shadow-xs flex flex-wrap items-center justify-between gap-3 border border-slate-200">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-600 rounded-xl">
-            <Building2 className="w-5 h-5 text-white" />
+          <div className="p-2 bg-blue-50 text-blue-700 rounded-lg border border-blue-100">
+            <Building2 className="w-5 h-5 text-blue-600" />
           </div>
           <div>
-            <h3 className="font-black text-sm uppercase tracking-wide">
+            <h3 className="font-bold text-sm text-slate-900 uppercase tracking-wide">
               PAPAN KONTROL WHFG
             </h3>
-            <p className="text-[11px] text-slate-300">
+            <p className="text-[11px] text-slate-500">
               Pemantauan stok fisik vs ambang batas per Customer PT
             </p>
           </div>
         </div>
 
         {/* Static Magnet Status Tags */}
-        <div className="flex items-center gap-3 text-xs font-semibold bg-white/10 px-3 py-1.5 rounded-xl">
-          <span className="text-slate-300 text-[10px] uppercase tracking-wider">Status:</span>
-          <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[11px] font-bold">🟢 AMAN</span>
-          <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-300 text-[11px] font-bold">🔴 KRITIS (≤ Min)</span>
-          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[11px] font-bold">🟡 OVER (≥ Max)</span>
+        <div className="flex items-center gap-2 text-xs font-semibold bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg">
+          <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wider">Status:</span>
+          <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" /> AMAN
+          </span>
+          <span className="px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 text-[11px] font-bold flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> KRITIS
+          </span>
+          <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-bold flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" /> OVER
+          </span>
         </div>
       </div>
 

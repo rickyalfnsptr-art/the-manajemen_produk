@@ -8,8 +8,9 @@ import { StockSummaryStats, User } from '@/types';
 import { SearchableCombobox, ComboboxOption } from '@/components/common/SearchableCombobox';
 import {
   ResponsiveContainer,
-  BarChart,
+  ComposedChart,
   Bar,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -87,8 +88,8 @@ export default function StatisticsPage() {
 
   const pieData = [
     { name: 'Aman', value: stats?.normalStockCount || 0, color: STATUS_COLORS.NORMAL },
-    { name: 'Kritis (≤ Min)', value: stats?.underMinCount || 0, color: STATUS_COLORS.UNDER_MIN },
-    { name: 'Overstock (≥ Max)', value: stats?.overMaxCount || 0, color: STATUS_COLORS.OVER_MAX },
+    { name: 'Kritis', value: stats?.underMinCount || 0, color: STATUS_COLORS.UNDER_MIN },
+    { name: 'Overstock', value: stats?.overMaxCount || 0, color: STATUS_COLORS.OVER_MAX },
   ].filter((d) => d.value > 0);
 
   const totalInSum = stats?.dailyTrends?.reduce((acc, curr) => acc + curr.inQty, 0) || 0;
@@ -105,7 +106,6 @@ export default function StatisticsPage() {
   return (
     <AppLayout
       title="Dashboard"
-      subtitle="Statistik mutasi & kesehatan stok WHFG"
       fullHeight
     >
       <div className="h-full flex flex-col justify-between gap-3 overflow-hidden">
@@ -115,9 +115,6 @@ export default function StatisticsPage() {
             <h2 className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">
               Ringkasan Eksekutif
             </h2>
-            <p className="text-[10px] text-slate-500 font-medium">
-              Pilih Customer PT untuk analisis spesifik
-            </p>
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -174,8 +171,8 @@ export default function StatisticsPage() {
               <span className="text-2xl font-mono font-black text-emerald-800">
                 {stats?.normalStockCount || 0}
               </span>
-              <span className="text-xs font-bold text-white bg-emerald-600 px-2.5 py-0.5 rounded-md shadow-2xs">
-                {normalPercentage}% Normal
+              <span className="text-xs font-bold text-slate-700 bg-slate-100 border border-slate-300 px-2.5 py-0.5 rounded-md">
+                Part
               </span>
             </div>
           </div>
@@ -184,15 +181,15 @@ export default function StatisticsPage() {
           <div className="p-3.5 rounded-lg bg-white border border-slate-200 shadow-sm flex flex-col justify-between hover:border-red-300 transition-all">
             <div className="flex items-center justify-between gap-2 mb-1.5">
               <span className="text-xs font-bold text-red-800 uppercase tracking-wider">
-                Kritis (≤ Min)
+                Kritis
               </span>
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-2xl font-mono font-black text-red-800">
                 {stats?.underMinCount || 0}
               </span>
-              <span className="text-xs font-bold text-white bg-red-600 px-2.5 py-0.5 rounded-md shadow-2xs">
-                {criticalPercentage}% Kritis
+              <span className="text-xs font-bold text-slate-700 bg-slate-100 border border-slate-300 px-2.5 py-0.5 rounded-md">
+                Part
               </span>
             </div>
           </div>
@@ -201,15 +198,15 @@ export default function StatisticsPage() {
           <div className="p-3.5 rounded-lg bg-white border border-slate-200 shadow-sm flex flex-col justify-between hover:border-amber-300 transition-all">
             <div className="flex items-center justify-between gap-2 mb-1.5">
               <span className="text-xs font-bold text-amber-800 uppercase tracking-wider">
-                Overstock (≥ Max)
+                Overstock
               </span>
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-2xl font-mono font-black text-amber-800">
                 {stats?.overMaxCount || 0}
               </span>
-              <span className="text-xs font-bold text-white bg-amber-500 px-2.5 py-0.5 rounded-md shadow-2xs">
-                {overPercentage}% Over
+              <span className="text-xs font-bold text-slate-700 bg-slate-100 border border-slate-300 px-2.5 py-0.5 rounded-md">
+                Part
               </span>
             </div>
           </div>
@@ -244,7 +241,7 @@ export default function StatisticsPage() {
             <div className="h-56 sm:h-60 lg:h-[calc(100vh-325px)] min-h-[200px] max-h-[340px] w-full">
               {stats?.dailyTrends && stats.dailyTrends.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={stats.dailyTrends} margin={{ top: 8, right: 10, left: -15, bottom: 0 }}>
+                  <ComposedChart data={stats.dailyTrends} margin={{ top: 8, right: 10, left: -15, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                     <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#64748b' }} />
                     <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
@@ -260,9 +257,11 @@ export default function StatisticsPage() {
                       itemStyle={{ color: '#fff' }}
                     />
                     <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '4px' }} iconType="circle" />
-                    <Bar dataKey="inQty" name="Masuk (IN)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="outQty" name="Keluar (OUT)" fill="#10b981" radius={[4, 4, 0, 0]} />
-                  </BarChart>
+                    <Bar dataKey="inQty" name="Masuk (IN)" fill="#3b82f6" radius={[4, 4, 0, 0]} opacity={0.85} />
+                    <Bar dataKey="outQty" name="Keluar (OUT)" fill="#10b981" radius={[4, 4, 0, 0]} opacity={0.85} />
+                    <Line type="monotone" dataKey="inQty" name="Tren IN" stroke="#1d4ed8" strokeWidth={2.5} dot={{ r: 4, fill: '#1d4ed8' }} activeDot={{ r: 6 }} />
+                    <Line type="monotone" dataKey="outQty" name="Tren OUT" stroke="#047857" strokeWidth={2.5} dot={{ r: 4, fill: '#047857' }} activeDot={{ r: 6 }} />
+                  </ComposedChart>
                 </ResponsiveContainer>
               ) : (
                 <div className="h-full flex items-center justify-center text-xs text-slate-400">
@@ -345,7 +344,7 @@ export default function StatisticsPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-red-500" />
-                    <span className="text-slate-700 font-semibold">Kritis (≤ Min)</span>
+                    <span className="text-slate-700 font-semibold">Kritis</span>
                   </div>
                   <span className="font-bold text-red-600 font-mono">
                     {stats?.underMinCount || 0} <span className="text-slate-400 font-normal">({criticalPercentage}%)</span>
@@ -361,7 +360,7 @@ export default function StatisticsPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-amber-500" />
-                    <span className="text-slate-700 font-semibold">Overstock (≥ Max)</span>
+                    <span className="text-slate-700 font-semibold">Overstock</span>
                   </div>
                   <span className="font-bold text-amber-600 font-mono">
                     {stats?.overMaxCount || 0} <span className="text-slate-400 font-normal">({overPercentage}%)</span>
