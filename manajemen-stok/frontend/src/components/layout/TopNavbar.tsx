@@ -15,8 +15,10 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   onToggleMobileSidebar,
 }) => {
   const [timeStr, setTimeStr] = useState<string>('');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const update = () => {
       const now = new Date();
       setTimeStr(
@@ -62,19 +64,11 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
         </div>
       </div>
 
-      {/* Right: Live WHFG Server Badge + Live Digital Clock */}
+      {/* Right: Live Digital Clock */}
       <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
-        {/* Live WHFG Server Status */}
-        <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-xs">
-          <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
-          <Activity className="w-4 h-4" />
-          <span className="hidden sm:inline">WHFG Online</span>
-        </div>
-
-        {/* Live Digital Clock */}
         <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-mono font-bold shadow-xs">
           <Clock className="w-4 h-4 text-slate-300" />
-          <span suppressHydrationWarning>{timeStr || '--:--:-- WIB'}</span>
+          <span suppressHydrationWarning>{mounted ? (timeStr || '--:--:-- WIB') : '--:--:-- WIB'}</span>
         </div>
       </div>
     </header>

@@ -29,8 +29,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('mtm_whfg_user') || localStorage.getItem('mtm_user');
       if (stored) {
@@ -61,12 +63,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
       items: [
         {
           name: 'Dashboard',
-          href: '/statistics',
+          href: '/dashboard',
           icon: LayoutDashboard,
         },
         {
           name: 'Monitoring Stok',
-          href: '/dashboard',
+          href: '/monitoring',
           icon: Boxes,
         },
       ],
@@ -106,10 +108,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
           <img
             src="/images/logo-mtm.jpg"
             alt="PT Menara Terus Makmur"
-            className="h-9 object-contain"
+            className="h-8 object-contain"
           />
-          <span className="text-[10px] font-extrabold text-blue-700 tracking-wider mt-1 uppercase">
-            WHFG System
+          <span className="text-xs font-black text-blue-700 tracking-wider mt-1 uppercase">
+            WHFG SYSTEM
           </span>
         </div>
 
@@ -171,15 +173,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile, isMobile = fals
       <div className="p-3 border-t border-slate-200 bg-slate-50/70" suppressHydrationWarning>
         <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white border border-slate-200 shadow-xs mb-2" suppressHydrationWarning>
           <div className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-700 font-bold rounded-lg text-xs border border-blue-200 flex-shrink-0" suppressHydrationWarning>
-            {getInitials(user?.fullName || user?.username)}
+            {mounted && user ? getInitials(user.fullName || user.username) : 'OP'}
           </div>
           <div className="min-w-0 flex-1" suppressHydrationWarning>
             <p className="text-xs font-bold text-slate-900 truncate" suppressHydrationWarning>
-              {user ? user.fullName : 'Operator MTM'}
+              {mounted && user ? user.fullName : 'Operator MTM'}
             </p>
             <p className="text-[10px] text-slate-500 truncate flex items-center gap-1 font-semibold" suppressHydrationWarning>
               <ShieldCheck className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-              <span>{user ? user.role : 'OPERATOR'}</span> &bull; <span>NPK: {user ? user.npk : 'MTM'}</span>
+              <span>{mounted && user ? user.role : 'OPERATOR'}</span> &bull; <span>NPK: {mounted && user ? user.npk : 'MTM'}</span>
             </p>
           </div>
         </div>
